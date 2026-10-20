@@ -117,8 +117,9 @@ h2{font-size:clamp(26px,3.2vw,38px);line-height:1.15;letter-spacing:-.6px;font-w
 .kit-sub{color:var(--muted);font-size:14px;margin-bottom:20px}
 .kit .ticks{flex:1;margin-bottom:24px}
 .kit-price{border-top:1px solid var(--line);padding-top:18px;margin-bottom:18px}
-.kit-price strong{font-size:38px;font-weight:800;color:var(--blue);letter-spacing:-1px}
-.kit-price span{display:block;font-size:13px;color:var(--muted)}
+.kp-now{font-size:16px;font-weight:600;color:var(--muted);white-space:nowrap}
+.kp-now strong{font-size:38px;font-weight:800;color:var(--blue);letter-spacing:-1px;margin-right:2px}
+.kp-note{font-size:13px;color:var(--muted);margin-top:2px}
 .fineprint{font-size:12px;color:var(--muted);margin:28px auto 0;max-width:880px;text-align:center}
 
 .calc-band{background:var(--blue);color:#fff;padding:0}

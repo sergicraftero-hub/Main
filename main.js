@@ -43,26 +43,13 @@
   var Q = {
     tipo:      { phase: 0, q: "¿La alarma es para una vivienda o un negocio?", o: [["Vivienda", "uso"], ["Negocio", "negocio"]] },
     uso:       { phase: 0, q: "¿Es tu vivienda habitual o una segunda vivienda?", o: [["Vivienda habitual", "como"], ["Segunda vivienda", "como"]] },
-    como:      { phase: 0, q: "¿Cómo es tu vivienda?", o: [["Piso", "piso"], ["Chalet o casa", "chalet"]] },
-    piso:      { phase: 0, q: "¿Cómo es tu piso?", o: [["Piso bajo", "accesos"], ["Piso intermedio", "accesos"], ["Ático", "accesos"]] },
-    chalet:    { phase: 0, q: "¿Cómo es tu chalet?", o: [["Individual", "accesos"], ["Adosado", "accesos"], ["Pareado", "accesos"]] },
-    accesos:   { phase: 1, q: "¿Tiene accesos secundarios?", o: [["Jardín o parcela", "vacia"], ["Balcón o terraza", "vacia"], ["No tiene", "vacia"]] },
-    vacia:     { phase: 1, q: function (a) { return a.uso === "Segunda vivienda" ? "¿Cada cuánto vas a la vivienda?" : "¿Cuánto tiempo pasa vacía al día?"; },
-                 o: function (a) { return a.uso === "Segunda vivienda"
-                   ? [["Fines de semana", "mascotas"], ["En vacaciones", "mascotas"], ["Una o dos veces al año", "mascotas"]]
-                   : [["Más de 5 horas", "mascotas"], ["Entre 2 y 5 horas", "mascotas"], ["Menos de 2 horas", "mascotas"], ["Siempre hay alguien", "mascotas"]]; } },
-    mascotas:  { phase: 1, q: "¿Hay mascotas en la vivienda?", o: [["Sí", "robo"], ["No", "robo"]] },
-    robo:      { phase: 1, q: "¿Has sufrido algún robo u ocupación?", o: [["Sí", "alarma"], ["No", "alarma"]] },
-    negocio:   { phase: 0, q: "¿Cómo es tu negocio?", o: [["Local a pie de calle", "ubicacion"], ["Local en centro comercial", "ubicacion"], ["Nave industrial", "ubicacion"], ["Oficina", "ubicacion"]] },
-    ubicacion: { phase: 0, q: "¿Dónde se encuentra?", o: [["En núcleo urbano", "empleados"], ["Fuera del núcleo urbano", "empleados"]] },
-    empleados: { phase: 1, q: "¿Cuántas personas trabajan en él?", o: [["Solo yo", "horario"], ["De 2 a 5", "horario"], ["Más de 5", "horario"]] },
-    horario:   { phase: 1, q: "¿Qué horario tiene?", o: [["Mañanas", "mercancia"], ["Mañanas y tardes", "mercancia"], ["Nocturno", "mercancia"], ["24 horas", "mercancia"]] },
-    mercancia: { phase: 1, q: "¿Qué valor tiene la mercancía?", o: [["Alto", "robo"], ["Medio", "robo"], ["Bajo", "robo"]] },
-    alarma:    { phase: 2, q: "¿Tienes alarma instalada actualmente?", o: [["Sí, de ADT", "cp"], ["Sí, de otra compañía", "cp"], ["No", "cp"]] },
-    cp:        { phase: 2, q: "¿Cuál es el código postal?", input: "cp" },
+    como:      { phase: 0, q: "¿Cómo es tu vivienda?", o: [["Piso", "accesos"], ["Piso bajo o ático", "accesos"], ["Chalet o casa", "accesos"]] },
+    accesos:   { phase: 1, q: "¿Tiene jardín, terraza o balcón?", o: [["Sí", "cp"], ["No", "cp"]] },
+    negocio:   { phase: 0, q: "¿Cómo es tu negocio?", o: [["Local a pie de calle", "cp"], ["Local en centro comercial", "cp"], ["Nave industrial", "cp"], ["Oficina", "cp"]] },
+    cp:        { phase: 1, q: "¿Cuál es el código postal?", input: "cp" },
     fin:       { phase: 2, q: "Tu estudio está listo", input: "fin" }
   };
-  var order = ["tipo","uso","como","piso","chalet","accesos","vacia","mascotas","negocio","ubicacion","empleados","horario","mercancia","robo","alarma","cp","fin"];
+  var order = ["tipo","uso","como","negocio","accesos","cp","fin"];
 
   var calc = document.getElementById("calc"), qEl = document.getElementById("calc-q"),
       opts = calc.querySelector(".calc-opts"), back = calc.querySelector(".calc-back"),
@@ -73,10 +60,9 @@
     if (a.tipo === "Negocio") return { name: "Kit Negocio", desc: "Detectores con cámara, botón de atraco y videovigilancia opcional, adaptado a tu local.", img: "img/camara.webp" };
     var risk = 0;
     if (a.como === "Chalet o casa") risk += 2;
-    if (a.piso === "Piso bajo" || a.piso === "Ático") risk += 1;
+    if (a.como === "Piso bajo o ático") risk += 1;
     if (a.uso === "Segunda vivienda") risk += 2;
-    if (a.robo === "Sí") risk += 1;
-    if (a.accesos && a.accesos !== "No tiene") risk += 1;
+    if (a.accesos === "Sí") risk += 1;
     if (risk >= 3) return { name: "Kit Advance", desc: "5 detectores, 3 de ellos con cámara, para cubrir todos los accesos.", img: "img/bodegon.png" };
     if (risk >= 1) return { name: "Kit Standard", desc: "4 detectores, 2 de ellos con cámara, para viviendas con varios accesos.", img: "img/fotodetector.webp" };
     return { name: "Kit Basic", desc: "3 detectores, 1 de ellos con cámara. Ideal para pisos.", img: "img/panel.webp" };
@@ -112,7 +98,7 @@
       opts.className = "calc-opts calc-form";
       opts.innerHTML =
         '<div class="result"><img src="' + k.img + '" alt=""><div><small>Te recomendamos</small><strong>' + k.name + '</strong><p>' + k.desc + '</p>' +
-        (answers.tipo === "Negocio" ? '<p class="result-price">Precio a medida</p>' : '<p class="result-price">' + C.ofertaPrecio + ' €/mes <span>los ' + C.ofertaMeses + ' primeros meses</span></p>') +
+        (answers.tipo === "Negocio" ? '<p class="result-price">Precio a medida</p>' : '<p class="result-price">' + C.ofertaPrecio + ' €/mes <span>los ' + C.ofertaMeses + ' primeros meses, después desde ' + C.precioDespues + ' €/mes</span></p>') +
         '</div></div>' +
         '<p class="calc-note">Déjanos tus datos y un asesor te confirma el presupuesto sin compromiso.</p>' +
         '<input type="text" name="nombre" autocomplete="name" placeholder="Nombre">' +

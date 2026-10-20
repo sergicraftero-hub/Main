@@ -14,6 +14,7 @@ window.CONFIG = {
   // Oferta (precio promocional ADT)
   ofertaPrecio: "19,90",
   ofertaMeses: "4",
+  precioDespues: "42,35",               // Cuota habitual mínima tras la promoción (IVA incluido)
 
   condiciones:
     "* 19,90 €/mes con IVA incluido durante los 4 primeros meses sobre el precio de tarifa del paquete elegido. " +
