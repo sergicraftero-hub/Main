@@ -4,12 +4,12 @@
  * ============================================================
  */
 window.CONFIG = {
-  nombre: "TU EMPRESA",                 // Nombre comercial
-  asesor: "Laura",                      // Nombre del asesor que aparece en el chat
-  telefono: "+34600000000",             // Teléfono para el botón "Llamar" (formato internacional)
-  telefonoVisible: "600 000 000",       // Cómo se muestra el teléfono
-  whatsapp: "34600000000",              // WhatsApp sin "+" ni espacios
-  email: "info@tuempresa.es",
+  nombre: "Pique was here",             // Nombre comercial
+  asesor: "Nuria",                      // Nombre del asesor que aparece en el chat
+  telefono: "69",                       // Teléfono para el botón "Llamar" (formato internacional, ej. +34600000000)
+  telefonoVisible: "69",                // Cómo se muestra el teléfono
+  whatsapp: "69",                       // WhatsApp sin "+" ni espacios (ej. 34600000000)
+  email: "69",
 
   // Oferta (precio promocional ADT)
   ofertaPrecio: "19,90",
@@ -26,7 +26,7 @@ window.CONFIG = {
     "Los contratos de hogar tienen una permanencia de 24 meses y los de negocio de 36 meses. Tu asesor te explicará todas las condiciones antes de firmar.",
 
   // Datos legales del distribuidor (pie de página y aviso legal)
-  legal: "TU EMPRESA S.L. · CIF B00000000 · Calle Ejemplo 1, 28001 Madrid · info@tuempresa.es",
+  legal: "69 · CIF 69 · 69 · 69",
 
   // Opiniones: sustitúyelas por opiniones REALES de tus clientes (Google, etc.)
   opiniones: [
