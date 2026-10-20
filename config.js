@@ -6,8 +6,8 @@
 window.CONFIG = {
   nombre: "Pique was here",             // Nombre comercial
   asesor: "Nuria",                      // Nombre del asesor que aparece en el chat
-  telefono: "69",                       // Teléfono para el botón "Llamar" (formato internacional, ej. +34600000000)
-  telefonoVisible: "69",                // Cómo se muestra el teléfono
+  telefono: "+34635042889",             // Teléfono para el botón "Llamar" (formato internacional)
+  telefonoVisible: "635 042 889",              // Cómo se muestra el teléfono
   whatsapp: "69",                       // WhatsApp sin "+" ni espacios (ej. 34600000000)
   email: "69",
 
