@@ -683,7 +683,8 @@ function renderSettings() {
   h += `<div class="section"><h2>Copia de seguridad</h2></div><div class="card stack">
     <div class="muted small">Tus datos solo están en este iPhone. Exporta una copia de vez en cuando (a Archivos / iCloud Drive).</div>
     <button class="btn block" data-a="exportData">Exportar copia</button>
-    <label class="btn block" style="text-align:center">Importar copia<input type="file" accept="application/json,.json" id="import" hidden></label>
+    <label class="btn block" style="text-align:center">Importar copia (archivo)<input type="file" id="import" hidden></label>
+    <button class="btn block" data-a="pasteData">Pegar copia (texto)</button>
     <button class="btn danger block" data-a="resetAll">Borrar todos los datos</button></div>
     <div class="muted small" style="text-align:center;margin-top:12px">${state.sessions.length} entrenos · ${state.weights.length} pesos · ${Object.keys(state.diet).length} días de dieta</div>`;
   return h;
@@ -806,19 +807,34 @@ actions.exportData = async () => {
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 };
 
+function importText(text) {
+  let data;
+  try {
+    // Admite el texto tal cual o dentro de un bloque ``` copiado de un chat
+    data = JSON.parse(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1));
+    if (!data || !Array.isArray(data.routines) || !Array.isArray(data.sessions)) throw new Error();
+  } catch { toast('Copia no válida'); return false; }
+  if (!confirm('Esto reemplaza todos tus datos actuales por los de la copia. ¿Seguir?')) return false;
+  state = migrate({ ...defaultState(), ...data });
+  save(); render(); toast('Copia importada');
+  return true;
+}
+
 function importData(file) {
   const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const data = JSON.parse(reader.result);
-      if (!data || !Array.isArray(data.routines) || !Array.isArray(data.sessions)) throw new Error();
-      if (!confirm('Esto reemplaza todos tus datos actuales por los de la copia. ¿Seguir?')) return;
-      state = migrate({ ...defaultState(), ...data });
-      save(); render(); toast('Copia importada');
-    } catch { toast('Archivo no válido'); }
-  };
+  reader.onload = () => importText(String(reader.result));
   reader.readAsText(file);
 }
+
+actions.pasteData = () => {
+  openDialog(`<h2>Pegar copia</h2>
+    <label class="field"><span>Pega aquí el texto de la copia</span>
+    <textarea name="text" style="min-height:220px"></textarea></label>
+    <div class="actions"><button class="btn" data-d="cancel">Cancelar</button>
+    <button class="btn primary" data-d="ok">Importar</button></div>`, {
+    ok(fd) { if (importText(String(fd.get('text') || ''))) closeDialog(); },
+  });
+};
 
 actions.resetAll = () => {
   if (!confirm('¿Borrar TODO? No se puede deshacer.')) return;
