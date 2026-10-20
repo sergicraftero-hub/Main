@@ -203,6 +203,8 @@ function nextRoutineId() {
   return i < 0 ? state.routines[0].id : state.routines[(i + 1) % state.routines.length].id;
 }
 
+const cardioIcon = (name) => (/muay|box|kick|mma|bjj|judo|karate|taekwondo|lucha/.test(plain(name)) ? '🥊' : '🏃');
+
 const summarize = (sets) => {
   if (!sets || !sets.length) return '';
   const eq = sets.every((s) => s.kg === sets[0].kg && s.reps === sets[0].reps);
@@ -224,7 +226,7 @@ function renderGym() {
   for (const r of state.routines) {
     const sub = r.kind === 'cardio' ? esc(r.desc) : r.exercises.map((x) => esc(x.name)).join(', ');
     h += `<button class="routine-btn ${r.id === next ? 'next' : ''}" data-a="start" data-id="${r.id}">
-      <div class="play ${r.kind === 'cardio' ? 'cardio' : ''}">${r.kind === 'cardio' ? '🏃' : '▶'}</div>
+      <div class="play ${r.kind === 'cardio' ? 'cardio' : ''}">${r.kind === 'cardio' ? cardioIcon(r.name) : '▶'}</div>
       <div class="grow"><h3>${esc(r.name)}</h3>
         <div class="muted small ellipsis">${r.id === next ? 'Toca hoy · ' : ''}${sub}</div>
       </div></button>`;
@@ -295,7 +297,7 @@ function renderCardio() {
     <div class="card">${r && r.desc ? `<div class="coach">${esc(r.desc)}</div>` : ''}
       ${last ? `<div class="muted small" style="margin-top:6px">Última vez (${niceDate(last.date)}): ${esc(last.note)}</div>` : ''}
       <label class="field" style="margin:12px 0 0"><span>Qué has hecho</span>
-      <textarea data-in="note" style="min-height:110px;font-family:inherit;font-size:16px" placeholder="Tiempo, velocidad, inclinación, ritmo…">${esc(a.note || '')}</textarea></label>
+      <textarea data-in="note" style="min-height:110px;font-family:inherit;font-size:16px" placeholder="Duración, rounds, intensidad, cómo te has sentido…">${esc(a.note || '')}</textarea></label>
     </div>
     <button class="btn danger block" data-a="discard">Descartar</button>`;
 }
@@ -662,7 +664,7 @@ function renderSettings() {
   const tg = state.targets;
   let h = '<div class="section"><h2>Rutinas</h2><button class="btn ghost small" data-a="editRoutine">+ Nueva</button></div><div class="list">';
   h += state.routines.map((r) => `<button class="item" data-a="editRoutine" data-id="${r.id}">
-    <div class="grow"><b>${esc(r.name)}</b><div class="muted small">${r.kind === 'cardio' ? 'Cardio' : `${r.exercises.length} ejercicios`}</div></div><span class="muted">›</span></button>`).join('')
+    <div class="grow"><b>${esc(r.name)}</b><div class="muted small">${r.kind === 'cardio' ? esc(r.desc) || 'Cardio / clase' : `${r.exercises.length} ejercicios`}</div></div><span class="muted">›</span></button>`).join('')
     || '<div class="empty">Sin rutinas</div>';
   h += '</div>';
 
@@ -734,7 +736,7 @@ actions.editRoutine = ({ id }) => {
   openDialog(`<h2>${r ? 'Editar rutina' : 'Nueva rutina'}</h2>
     <div class="row"><label class="field grow"><span>Nombre</span><input type="text" name="name" value="${esc(r?.name || '')}" autocomplete="off"></label>
     <label class="field" style="width:120px"><span>Tipo</span><select name="kind" id="r-kind">
-      <option value="gym" ${kind === 'gym' ? 'selected' : ''}>Pesas</option><option value="cardio" ${kind === 'cardio' ? 'selected' : ''}>Cardio</option></select></label></div>
+      <option value="gym" ${kind === 'gym' ? 'selected' : ''}>Pesas</option><option value="cardio" ${kind === 'cardio' ? 'selected' : ''}>Cardio / clase</option></select></label></div>
     <div id="r-gym" ${kind === 'cardio' ? 'hidden' : ''}>
       <label class="field"><span>Ejercicios — uno por línea: nombre | kg x reps @ RIR, … | nota</span>
       <textarea name="ex" placeholder="Press banca | 90x3-5@1-2, 85x4-8@1-2 | Pausa en el pecho&#10;Dominadas | AMRAP, AMRAP&#10;Curl bíceps 3x12 12">${esc(r ? r.exercises.map(exLine).join('\n') : '')}</textarea></label>

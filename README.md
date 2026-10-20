@@ -24,7 +24,7 @@ Dominadas | AMRAP, AMRAP | Unilateral, agarre neutro
 Dominadas asistidas | -30xAMRAP, -30xAMRAP
 ```
 
-También vale la forma corta `Press banca 4x8 60`. Las rutinas pueden ser de pesas o de cardio.
+También vale la forma corta `Press banca 4x8 60`. Las rutinas pueden ser de pesas o de cardio / clase (muay thai, correr…).
 Si el nombre lleva el día de la semana (`Martes · Empuje`), la app marca la que toca hoy.
 El 1RM estimado usa `kg · (1 + 0,033 · (reps + RIR))`.
 
