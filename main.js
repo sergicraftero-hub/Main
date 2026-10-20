@@ -1,117 +1,170 @@
 (function () {
   var C = window.CONFIG;
 
-  // Rellenar textos configurables
+  // Textos configurables
   document.querySelectorAll("[data-cfg]").forEach(function (el) {
     var v = C[el.getAttribute("data-cfg")];
     if (v != null) el.textContent = v;
   });
-  document.querySelectorAll("[data-cfg-initial]").forEach(function (el) {
-    el.textContent = (C[el.getAttribute("data-cfg-initial")] || "A").charAt(0);
-  });
-
-  // Mes actual
   var meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-  var now = new Date();
-  document.querySelectorAll("[data-month]").forEach(function (el) { el.textContent = meses[now.getMonth()].toUpperCase(); });
-  document.querySelectorAll("[data-month-lower]").forEach(function (el) { el.textContent = meses[now.getMonth()]; });
+  document.querySelectorAll("[data-month]").forEach(function (el) { el.textContent = meses[new Date().getMonth()]; });
 
-  // Enlaces de teléfono y WhatsApp
-  function waLink(text) {
-    return "https://wa.me/" + C.whatsapp + "?text=" + encodeURIComponent(text);
-  }
-  var waDefault = "Hola, me interesa una alarma ADT. ¿Me podéis informar de la oferta?";
+  // Enlaces de contacto
+  function waLink(text) { return "https://wa.me/" + C.whatsapp + "?text=" + encodeURIComponent(text); }
+  function openWa(text) { window.open(waLink(text), "_blank", "noopener"); }
   document.querySelectorAll(".js-wa").forEach(function (a) {
-    a.href = waLink(waDefault);
+    a.href = waLink("Hola, me interesa una alarma ADT. ¿Me podéis informar?");
     a.target = "_blank";
     a.rel = "noopener";
   });
   document.querySelectorAll(".js-tel").forEach(function (a) { a.href = "tel:" + C.telefono; });
 
-  // Botones de kit preseleccionan el formulario
-  var tipo = document.querySelector("select[name=tipo]");
-  document.querySelectorAll(".js-kit").forEach(function (a) {
-    a.addEventListener("click", function () {
-      var k = a.getAttribute("data-kit");
-      for (var i = 0; i < tipo.options.length; i++) if (tipo.options[i].text === k) tipo.selectedIndex = i;
+  function validPhone(v) { return /^(\+?34)?[6789]\d{8}$/.test(v.replace(/[\s.-]/g, "")); }
+
+  // "Llámame gratis"
+  document.querySelectorAll(".callme").forEach(function (form) {
+    var msg = form.parentNode.querySelector(".form-msg");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var tel = form.elements.telefono.value.trim();
+      if (!validPhone(tel)) {
+        msg.textContent = "Introduce un teléfono válido de 9 cifras.";
+        msg.className = "form-msg error";
+        msg.hidden = false;
+        form.elements.telefono.focus();
+        return;
+      }
+      msg.hidden = true;
+      openWa("Hola, quiero que me llaméis para informarme de las alarmas ADT.\nTeléfono: " + tel);
     });
   });
 
-  // Cuenta atrás
-  var end;
-  if (C.ofertaFin) end = new Date(C.ofertaFin + "T23:59:59");
-  else end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
-  function pad(n) { return (n < 10 ? "0" : "") + n; }
-  function tick() {
-    var d = Math.max(0, end - new Date()) / 1000;
-    document.getElementById("cd-d").textContent = pad(Math.floor(d / 86400));
-    document.getElementById("cd-h").textContent = pad(Math.floor(d % 86400 / 3600));
-    document.getElementById("cd-m").textContent = pad(Math.floor(d % 3600 / 60));
-    document.getElementById("cd-s").textContent = pad(Math.floor(d % 60));
+  // ============ Calculadora ============
+  var Q = {
+    tipo:      { phase: 0, q: "¿La alarma es para una vivienda o un negocio?", o: [["Vivienda", "uso"], ["Negocio", "negocio"]] },
+    uso:       { phase: 0, q: "¿Es tu vivienda habitual o una segunda vivienda?", o: [["Vivienda habitual", "como"], ["Segunda vivienda", "como"]] },
+    como:      { phase: 0, q: "¿Cómo es tu vivienda?", o: [["Piso", "piso"], ["Chalet o casa", "chalet"]] },
+    piso:      { phase: 0, q: "¿Cómo es tu piso?", o: [["Piso bajo", "accesos"], ["Piso intermedio", "accesos"], ["Ático", "accesos"]] },
+    chalet:    { phase: 0, q: "¿Cómo es tu chalet?", o: [["Individual", "accesos"], ["Adosado", "accesos"], ["Pareado", "accesos"]] },
+    accesos:   { phase: 1, q: "¿Tiene accesos secundarios?", o: [["Jardín o parcela", "vacia"], ["Balcón o terraza", "vacia"], ["No tiene", "vacia"]] },
+    vacia:     { phase: 1, q: function (a) { return a.uso === "Segunda vivienda" ? "¿Cada cuánto vas a la vivienda?" : "¿Cuánto tiempo pasa vacía al día?"; },
+                 o: function (a) { return a.uso === "Segunda vivienda"
+                   ? [["Fines de semana", "mascotas"], ["En vacaciones", "mascotas"], ["Una o dos veces al año", "mascotas"]]
+                   : [["Más de 5 horas", "mascotas"], ["Entre 2 y 5 horas", "mascotas"], ["Menos de 2 horas", "mascotas"], ["Siempre hay alguien", "mascotas"]]; } },
+    mascotas:  { phase: 1, q: "¿Hay mascotas en la vivienda?", o: [["Sí", "robo"], ["No", "robo"]] },
+    robo:      { phase: 1, q: "¿Has sufrido algún robo u ocupación?", o: [["Sí", "alarma"], ["No", "alarma"]] },
+    negocio:   { phase: 0, q: "¿Cómo es tu negocio?", o: [["Local a pie de calle", "ubicacion"], ["Local en centro comercial", "ubicacion"], ["Nave industrial", "ubicacion"], ["Oficina", "ubicacion"]] },
+    ubicacion: { phase: 0, q: "¿Dónde se encuentra?", o: [["En núcleo urbano", "empleados"], ["Fuera del núcleo urbano", "empleados"]] },
+    empleados: { phase: 1, q: "¿Cuántas personas trabajan en él?", o: [["Solo yo", "horario"], ["De 2 a 5", "horario"], ["Más de 5", "horario"]] },
+    horario:   { phase: 1, q: "¿Qué horario tiene?", o: [["Mañanas", "mercancia"], ["Mañanas y tardes", "mercancia"], ["Nocturno", "mercancia"], ["24 horas", "mercancia"]] },
+    mercancia: { phase: 1, q: "¿Qué valor tiene la mercancía?", o: [["Alto", "robo"], ["Medio", "robo"], ["Bajo", "robo"]] },
+    alarma:    { phase: 2, q: "¿Tienes alarma instalada actualmente?", o: [["Sí, de ADT", "cp"], ["Sí, de otra compañía", "cp"], ["No", "cp"]] },
+    cp:        { phase: 2, q: "¿Cuál es el código postal?", input: "cp" },
+    fin:       { phase: 2, q: "Tu estudio está listo", input: "fin" }
+  };
+  var order = ["tipo","uso","como","piso","chalet","accesos","vacia","mascotas","negocio","ubicacion","empleados","horario","mercancia","robo","alarma","cp","fin"];
+
+  var calc = document.getElementById("calc"), qEl = document.getElementById("calc-q"),
+      opts = calc.querySelector(".calc-opts"), back = calc.querySelector(".calc-back"),
+      bar = calc.querySelector(".calc-bar i"), phases = calc.querySelectorAll("[data-phase]");
+  var answers, history, lastFocus;
+
+  function kit(a) {
+    if (a.tipo === "Negocio") return { name: "Kit Negocio", desc: "Detectores con cámara, botón de atraco y videovigilancia opcional, adaptado a tu local.", img: "img/camara.webp" };
+    var risk = 0;
+    if (a.como === "Chalet o casa") risk += 2;
+    if (a.piso === "Piso bajo" || a.piso === "Ático") risk += 1;
+    if (a.uso === "Segunda vivienda") risk += 2;
+    if (a.robo === "Sí") risk += 1;
+    if (a.accesos && a.accesos !== "No tiene") risk += 1;
+    if (risk >= 3) return { name: "Kit Advance", desc: "5 detectores, 3 de ellos con cámara, para cubrir todos los accesos.", img: "img/bodegon.png" };
+    if (risk >= 1) return { name: "Kit Standard", desc: "4 detectores, 2 de ellos con cámara, para viviendas con varios accesos.", img: "img/fotodetector.webp" };
+    return { name: "Kit Basic", desc: "3 detectores, 1 de ellos con cámara. Ideal para pisos.", img: "img/panel.webp" };
   }
-  tick();
-  setInterval(tick, 1000);
 
-  // Pasos "cómo funciona" animados
-  var steps = document.querySelectorAll(".step"), si = 0;
-  steps.forEach(function (s, i) { s.addEventListener("mouseenter", function () { si = i; show(); }); });
-  function show() { steps.forEach(function (s, i) { s.classList.toggle("active", i === si); }); }
-  setInterval(function () { si = (si + 1) % steps.length; show(); }, 3500);
+  function render(id) {
+    var s = Q[id];
+    qEl.textContent = typeof s.q === "function" ? s.q(answers) : s.q;
+    opts.innerHTML = "";
+    opts.className = "calc-opts";
+    back.hidden = history.length === 0;
+    phases.forEach(function (p) { p.classList.toggle("on", +p.getAttribute("data-phase") <= s.phase); });
+    var idx = order.indexOf(id);
+    bar.style.width = Math.max(8, Math.round(idx / (order.length - 1) * 100)) + "%";
 
-  // Equipo
-  var devices = [
-    { t: "Panel de control", i: "🎛️", d: "El cerebro del sistema: gestiona todos los detectores y se comunica con la Central Receptora.",
-      l: ["Conexión permanente con la Central Receptora ADT", "Comunicación por varias vías con antiinhibición", "Batería de respaldo ante cortes eléctricos"] },
-    { t: "Detector con cámara", i: "📷", d: "Detecta movimiento y toma imágenes para que la Central verifique la alarma al instante.",
-      l: ["Verificación por imagen de cada salto", "Visión nocturna", "Inalámbrico, sin obras"] },
-    { t: "Detector de movimiento", i: "📶", d: "Sensor infrarrojo que detecta presencia en las estancias protegidas.",
-      l: ["Opción inmune a mascotas", "Largo alcance", "Batería de larga duración"] },
-    { t: "Detector magnético", i: "🚪", d: "Se coloca en puertas y ventanas y avisa en cuanto se abren.",
-      l: ["Protección perimetral", "Discreto y compacto", "Ideal para accesos"] },
-    { t: "Sirena", i: "📢", d: "Sirena de alta potencia que disuade al intruso desde el primer segundo.",
-      l: ["Más de 100 dB", "Protección antisabotaje", "Señal luminosa"] },
-    { t: "App y mandos", i: "📱", d: "Conecta y desconecta tu alarma con el mando, el teclado o la App desde cualquier lugar.",
-      l: ["Avisos en tiempo real", "Gestión de usuarios", "Historial de eventos"] }
-  ];
-  var tabs = document.querySelector(".device-tabs");
-  devices.forEach(function (dv, i) {
-    var b = document.createElement("button");
-    b.type = "button";
-    b.setAttribute("role", "tab");
-    b.innerHTML = "<span>" + dv.i + "</span>" + dv.t;
-    b.addEventListener("click", function () { pick(i); });
-    tabs.appendChild(b);
-  });
-  function pick(i) {
-    var dv = devices[i];
-    tabs.querySelectorAll("button").forEach(function (b, j) { b.classList.toggle("on", i === j); b.setAttribute("aria-selected", i === j); });
-    document.getElementById("dv-ico").textContent = dv.i;
-    document.getElementById("dv-title").textContent = dv.t;
-    document.getElementById("dv-desc").textContent = dv.d;
-    document.getElementById("dv-list").innerHTML = dv.l.map(function (x) { return "<li>" + x + "</li>"; }).join("");
+    if (s.input === "cp") {
+      opts.className = "calc-opts calc-form";
+      opts.innerHTML = '<input type="text" inputmode="numeric" maxlength="5" placeholder="Ej. 28001" aria-label="Código postal" value="' + (answers.cp || "") + '">' +
+        '<p class="form-msg error" hidden></p><button class="btn btn-primary btn-lg" type="button">Continuar</button>';
+      var inp = opts.querySelector("input"), err = opts.querySelector(".form-msg");
+      function go() {
+        if (!/^\d{5}$/.test(inp.value)) { err.textContent = "Introduce un código postal de 5 cifras."; err.hidden = false; return; }
+        answers.cp = inp.value; next(id, "fin");
+      }
+      opts.querySelector("button").onclick = go;
+      inp.onkeydown = function (e) { if (e.key === "Enter") go(); };
+      inp.focus();
+      return;
+    }
+    if (s.input === "fin") {
+      var k = kit(answers);
+      bar.style.width = "100%";
+      opts.className = "calc-opts calc-form";
+      opts.innerHTML =
+        '<div class="result"><img src="' + k.img + '" alt=""><div><small>Te recomendamos</small><strong>' + k.name + '</strong><p>' + k.desc + '</p>' +
+        (answers.tipo === "Negocio" ? '<p class="result-price">Precio a medida</p>' : '<p class="result-price">' + C.ofertaPrecio + ' €/mes <span>los ' + C.ofertaMeses + ' primeros meses</span></p>') +
+        '</div></div>' +
+        '<p class="calc-note">Déjanos tus datos y un asesor te confirma el presupuesto sin compromiso.</p>' +
+        '<input type="text" name="nombre" autocomplete="name" placeholder="Nombre">' +
+        '<input type="tel" name="telefono" inputmode="tel" autocomplete="tel" placeholder="Teléfono">' +
+        '<label class="check"><input type="checkbox" name="priv"> <span>Acepto la <a href="privacidad.html" target="_blank">política de privacidad</a> y que me contactéis.</span></label>' +
+        '<p class="form-msg error" hidden></p>' +
+        '<button class="btn btn-primary btn-lg" type="button">Quiero mi presupuesto</button>';
+      var nom = opts.querySelector("[name=nombre]"), tel = opts.querySelector("[name=telefono]"),
+          priv = opts.querySelector("[name=priv]"), e2 = opts.querySelector(".form-msg");
+      opts.querySelector("button").onclick = function () {
+        var m = "";
+        if (!nom.value.trim()) m = "Escribe tu nombre.";
+        else if (!validPhone(tel.value)) m = "Introduce un teléfono válido de 9 cifras.";
+        else if (!priv.checked) m = "Debes aceptar la política de privacidad.";
+        if (m) { e2.textContent = m; e2.hidden = false; return; }
+        var lines = ["Hola, he hecho el estudio de seguridad en la web.", "Nombre: " + nom.value.trim(), "Teléfono: " + tel.value.trim(), "Recomendación: " + k.name];
+        order.forEach(function (key) { if (answers[key] && Q[key].o) lines.push((typeof Q[key].q === "function" ? Q[key].q(answers) : Q[key].q) + " " + answers[key]); });
+        lines.push("C.P.: " + answers.cp);
+        openWa(lines.join("\n"));
+      };
+      nom.focus();
+      return;
+    }
+    var list = typeof s.o === "function" ? s.o(answers) : s.o;
+    list.forEach(function (o) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "opt" + (answers[id] === o[0] ? " sel" : "");
+      b.innerHTML = "<span>" + o[0] + '</span><svg><use href="#i-arrow"/></svg>';
+      b.onclick = function () { answers[id] = o[0]; next(id, o[1]); };
+      opts.appendChild(b);
+    });
+    var first = opts.querySelector(".opt");
+    if (first) first.focus();
   }
-  pick(0);
+  function next(from, to) { history.push(from); render(to); }
+  back.onclick = function () { render(history.pop()); };
 
-  // Opiniones
-  document.getElementById("reviews").innerHTML = C.opiniones.map(function (o) {
-    return '<article class="review"><div class="stars">★★★★★</div><p>“' + o.texto + '”</p><strong>' + o.nombre + "</strong><small>" + o.rol + "</small></article>";
-  }).join("");
-
-  // Formulario -> WhatsApp
-  var form = document.getElementById("lead-form"), err = document.getElementById("form-error");
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    var f = form.elements, msg = "";
-    if (!f.nombre.value.trim()) msg = "Escribe tu nombre.";
-    else if (!/^[0-9 +]{9,15}$/.test(f.telefono.value.trim())) msg = "Escribe un teléfono válido.";
-    else if (!f.privacidad.checked) msg = "Debes aceptar la política de privacidad.";
-    if (msg) { err.textContent = msg; err.hidden = false; return; }
-    err.hidden = true;
-    var text = "Hola, quiero que me llaméis para informarme de las alarmas ADT.\n" +
-      "Nombre: " + f.nombre.value.trim() + "\n" +
-      "Teléfono: " + f.telefono.value.trim() + "\n" +
-      (f.cp.value.trim() ? "C.P.: " + f.cp.value.trim() + "\n" : "") +
-      "Interés: " + f.tipo.value;
-    window.open(waLink(text), "_blank", "noopener");
-  });
+  function open() {
+    lastFocus = document.activeElement;
+    answers = {}; history = [];
+    calc.hidden = false;
+    document.body.classList.add("noscroll");
+    render("tipo");
+  }
+  function close() {
+    calc.hidden = true;
+    document.body.classList.remove("noscroll");
+    if (lastFocus) lastFocus.focus();
+  }
+  document.querySelectorAll(".js-open-calc").forEach(function (b) { b.addEventListener("click", open); });
+  calc.querySelector(".calc-close").onclick = close;
+  calc.addEventListener("click", function (e) { if (e.target === calc) close(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !calc.hidden) close(); });
 })();
