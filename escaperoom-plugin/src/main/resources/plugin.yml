@@ -1,0 +1,55 @@
+name: EscapeRoom
+version: '${version}'
+main: com.sergicraftero.escaperoom.EscapeRoomPlugin
+api-version: '1.21'
+description: Convierte zonas del mundo en salas de escape y construye "La Torre del Alquimista".
+authors: [sergicraftero]
+softdepend: [PlaceholderAPI, WorldEdit, FastAsyncWorldEdit, Vault]
+
+commands:
+  escape:
+    description: Comando principal de las salas de escape.
+    usage: /escape help
+    aliases: [er, escaperoom]
+
+permissions:
+  escaperoom.play:
+    description: Jugar a las salas de escape (join, leave, list, info, top, stats).
+    default: true
+  escaperoom.hint:
+    description: Pedir pistas durante una partida.
+    default: true
+  escaperoom.admin.create:
+    description: Crear salas.
+    default: op
+  escaperoom.admin.edit:
+    description: Editar salas y su configuración.
+    default: op
+  escaperoom.admin.delete:
+    description: Borrar salas.
+    default: op
+  escaperoom.admin.control:
+    description: Forzar inicio, parada o reinicio de partidas.
+    default: op
+  escaperoom.admin.build:
+    description: Construir y demoler mapas generados.
+    default: op
+  escaperoom.admin.reload:
+    description: Recargar configuración, mensajes y salas.
+    default: op
+  escaperoom.bypass:
+    description: Ignorar la protección de las regiones de las salas.
+    default: op
+  escaperoom.admin:
+    description: Acceso total de administración.
+    default: op
+    children:
+      escaperoom.play: true
+      escaperoom.hint: true
+      escaperoom.admin.create: true
+      escaperoom.admin.edit: true
+      escaperoom.admin.delete: true
+      escaperoom.admin.control: true
+      escaperoom.admin.build: true
+      escaperoom.admin.reload: true
+      escaperoom.bypass: true

@@ -1,0 +1,46 @@
+# ─────────────────────────────────────────────────────────────
+#  EscapeRoom — configuración general
+# ─────────────────────────────────────────────────────────────
+
+# Idioma de los mensajes (se carga messages_<language>.yml)
+language: es
+
+# Si es true, para entrar en una sala hace falta escaperoom.join.<sala>
+per-room-permissions: false
+
+game:
+  # Segundos de cuenta atrás cuando se alcanza el mínimo de jugadores
+  default-countdown: 15
+  # Si la sala se llena, la cuenta atrás se reduce a estos segundos
+  full-countdown: 5
+  # Segundos que se espera tras la victoria antes de devolver a los jugadores
+  victory-teleport-delay: 6
+  # El chat de los jugadores en partida sólo lo ve su equipo
+  team-chat: true
+  # Comandos permitidos durante la partida (sin la barra)
+  allowed-commands: [escape, er, escaperoom, msg, tell, r]
+  # Avisos de tiempo restante (segundos)
+  time-warnings: [600, 300, 60, 30, 10]
+
+protection:
+  # Bloques con los que los jugadores pueden interactuar libremente dentro de la sala
+  allowed-interactions: [CHEST, TRAPPED_CHEST, BARREL, LECTERN]
+  # Expulsar de la región a quien no esté jugando (salvo escaperoom.bypass)
+  block-outsiders: true
+
+snapshot:
+  # Bloques procesados por tick al capturar / restaurar una sala
+  blocks-per-tick: 6000
+  # Usar WorldEdit / FastAsyncWorldEdit para guardar y restaurar si están instalados
+  use-worldedit: true
+
+build:
+  # Bloques colocados por tick al generar mapas
+  blocks-per-tick: 2500
+
+leaderboard:
+  size: 10
+
+ambient:
+  # Distancia a la que un jugador activa partículas y sonidos ambientales
+  radius: 28
