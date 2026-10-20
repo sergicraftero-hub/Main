@@ -8,7 +8,7 @@ window.CONFIG = {
   asesor: "Nuria",                      // Nombre del asesor que aparece en el chat
   telefono: "+34635042889",             // Teléfono para el botón "Llamar" (formato internacional)
   telefonoVisible: "635 042 889",              // Cómo se muestra el teléfono
-  whatsapp: "69",                       // WhatsApp sin "+" ni espacios (ej. 34600000000)
+  whatsapp: "34635042889",              // WhatsApp sin "+" ni espacios
   email: "69",
 
   // Oferta (precio promocional ADT)
