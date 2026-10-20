@@ -11,8 +11,22 @@ los datos se guardan solo en tu iPhone.
 - **Peso**: un registro al día, gráfica de 90 días con media de 7 días, cambio a 7 y 30 días, peso objetivo.
 - **Dieta**: tus comidas habituales como botones de un toque, totales de kcal y proteína frente a tu objetivo,
   "copiar del día anterior" y comidas puntuales.
-- **Ajustes**: editar rutinas (una línea por ejercicio: `Press banca 4x8 60`), comidas habituales,
-  objetivos y copia de seguridad (exportar/importar JSON).
+- **Ajustes**: editar rutinas, comidas habituales, objetivos y copia de seguridad (exportar/importar JSON).
+
+### Formato de las rutinas
+
+Una línea por ejercicio: `nombre | series | nota del entrenador`. Cada serie es `kg x reps @ RIR`
+(todo opcional), separadas por comas:
+
+```
+Flat barbell BP | 90x3-5@1-2, 85x4-8@1-2, 85x4-8@1-2
+Dominadas | AMRAP, AMRAP | Unilateral, agarre neutro
+Dominadas asistidas | -30xAMRAP, -30xAMRAP
+```
+
+También vale la forma corta `Press banca 4x8 60`. Las rutinas pueden ser de pesas o de cardio.
+Si el nombre lleva el día de la semana (`Martes · Empuje`), la app marca la que toca hoy.
+El 1RM estimado usa `kg · (1 + 0,033 · (reps + RIR))`.
 
 ## Instalar en el iPhone
 

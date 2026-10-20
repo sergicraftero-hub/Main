@@ -5,24 +5,28 @@
 const KEY = 'gym-tracker-v1';
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 
+// Rutina: { id, name, kind: 'gym' | 'cardio', desc, exercises: [{ id, name, note, sets: [{ kg, reps, rir }] }] }
+// Los objetivos de cada serie son texto ("90", "4-8", "1-2", "AMRAP") tal cual los pone el entrenador.
 function defaultState() {
-  const ex = (name, sets, reps, weight) => ({ id: uid(), name, sets, reps, weight });
+  const ex = (name, n, reps, kg, rir = '') =>
+    ({ id: uid(), name, note: '', sets: Array.from({ length: n }, () => ({ kg: String(kg), reps: String(reps), rir })) });
   const food = (name, kcal, protein, carbs, fat) => ({ id: uid(), name, kcal, protein, carbs, fat });
   return {
-    version: 1,
+    version: 2,
     routines: [
-      { id: uid(), name: 'Día A · Empuje', exercises: [
-        ex('Press banca', 4, 8, 60), ex('Press militar', 3, 10, 35),
-        ex('Fondos', 3, 10, 0), ex('Extensión tríceps polea', 3, 12, 20),
+      { id: uid(), name: 'Día A · Empuje', kind: 'gym', desc: '', exercises: [
+        ex('Press banca', 4, '6-8', 60, '1-2'), ex('Press militar', 3, '8-10', 35, '1-2'),
+        ex('Fondos', 3, '10-12', 0), ex('Extensión tríceps polea', 3, '12-15', 20),
       ] },
-      { id: uid(), name: 'Día B · Tirón', exercises: [
-        ex('Dominadas', 4, 8, 0), ex('Remo con barra', 4, 8, 50),
-        ex('Jalón al pecho', 3, 12, 45), ex('Curl bíceps', 3, 12, 12),
+      { id: uid(), name: 'Día B · Tirón', kind: 'gym', desc: '', exercises: [
+        ex('Dominadas', 4, 'AMRAP', 0), ex('Remo con barra', 4, '6-8', 50, '1-2'),
+        ex('Jalón al pecho', 3, '10-12', 45), ex('Curl bíceps', 3, '10-12', 12),
       ] },
-      { id: uid(), name: 'Día C · Pierna', exercises: [
-        ex('Sentadilla', 4, 6, 80), ex('Peso muerto rumano', 3, 10, 60),
-        ex('Prensa', 3, 12, 120), ex('Gemelo de pie', 4, 15, 40),
+      { id: uid(), name: 'Día C · Pierna', kind: 'gym', desc: '', exercises: [
+        ex('Sentadilla', 4, '4-6', 80, '1-2'), ex('Peso muerto rumano', 3, '8-10', 60),
+        ex('Prensa', 3, '10-12', 120), ex('Gemelo de pie', 4, '12-15', 40),
       ] },
+      { id: uid(), name: 'Cardio', kind: 'cardio', desc: '30 min corriendo', exercises: [] },
     ],
     sessions: [],
     active: null,
@@ -40,8 +44,32 @@ function defaultState() {
   };
 }
 
+// Pasa datos de versiones anteriores al formato actual
+function migrate(s) {
+  if ((s.version || 1) < 2) {
+    for (const r of s.routines) {
+      r.kind = r.kind || 'gym';
+      r.desc = r.desc || '';
+      for (const ex of r.exercises) {
+        if (typeof ex.sets === 'number') {
+          ex.sets = Array.from({ length: ex.sets }, () => ({ kg: ex.weight ? String(ex.weight) : '', reps: String(ex.reps), rir: '' }));
+          delete ex.reps; delete ex.weight;
+        }
+        ex.note = ex.note || '';
+      }
+    }
+    for (const ses of s.sessions) {
+      ses.kind = ses.kind || 'gym';
+      for (const ex of ses.exercises) for (const st of ex.sets) if (st.rir === undefined) st.rir = '';
+    }
+    s.active = null;
+    s.version = 2;
+  }
+  return s;
+}
+
 let state;
-try { state = JSON.parse(localStorage.getItem(KEY)) || defaultState(); }
+try { state = migrate(JSON.parse(localStorage.getItem(KEY)) || defaultState()); }
 catch { state = defaultState(); }
 
 function save() {
@@ -137,24 +165,38 @@ view.addEventListener('click', (e) => {
 
 // ---------- Entreno ----------
 
-function lastSetsFor(name) {
+const same = (a, b) => a.trim().toLowerCase() === b.trim().toLowerCase();
+// Número si el texto es un número ("90", "-30", "7,5"); si no (AMRAP...), null
+const numOrNull = (v) => (/^\s*-?\d+(?:[.,]\d+)?\s*$/.test(String(v ?? '')) ? num(v) : null);
+// 1RM estimado (la misma fórmula que el Excel): kg · (1 + 0,033 · (reps + RIR))
+const e1rm = (s) => (s.kg > 0 && s.reps > 0 ? s.kg * (1 + 0.033 * (s.reps + (Number(s.rir) || 0))) : 0);
+
+function lastExercise(name) {
   for (let i = state.sessions.length - 1; i >= 0; i--) {
-    const ex = state.sessions[i].exercises.find((x) => x.name.toLowerCase() === name.toLowerCase());
-    if (ex && ex.sets.some((s) => s.done)) return ex.sets.filter((s) => s.done);
+    const ex = state.sessions[i].exercises.find((x) => same(x.name, name));
+    if (ex && ex.sets.some((s) => s.done)) return ex;
   }
   return null;
 }
+const lastSetsFor = (name) => { const ex = lastExercise(name); return ex ? ex.sets.filter((s) => s.done) : null; };
 
-function bestKg(name) {
-  let best = 0;
+function records(name) {
+  let kg = 0, rm = 0;
   for (const s of state.sessions) for (const ex of s.exercises)
-    if (ex.name.toLowerCase() === name.toLowerCase())
-      for (const st of ex.sets) if (st.done) best = Math.max(best, st.kg);
-  return best;
+    if (same(ex.name, name)) for (const st of ex.sets) if (st.done) { kg = Math.max(kg, st.kg); rm = Math.max(rm, e1rm(st)); }
+  return { kg, rm };
 }
 
+const WEEKDAYS = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+const plain = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+// La rutina que toca: la que lleva el día de la semana en el nombre o, si no, la siguiente a la última hecha
 function nextRoutineId() {
   if (!state.routines.length) return null;
+  const today = WEEKDAYS[new Date().getDay()];
+  const byDay = state.routines.find((r) => plain(r.name).includes(today));
+  if (byDay) return byDay.id;
+  if (state.routines.some((r) => WEEKDAYS.some((d) => plain(r.name).includes(d)))) return null;
   const last = state.sessions[state.sessions.length - 1];
   if (!last) return state.routines[0].id;
   const i = state.routines.findIndex((r) => r.id === last.routineId);
@@ -163,38 +205,43 @@ function nextRoutineId() {
 
 const summarize = (sets) => {
   if (!sets || !sets.length) return '';
-  const same = sets.every((s) => s.kg === sets[0].kg && s.reps === sets[0].reps);
-  return same ? `${sets.length}×${sets[0].reps} · ${fmt(sets[0].kg)} kg`
+  const eq = sets.every((s) => s.kg === sets[0].kg && s.reps === sets[0].reps);
+  return eq ? `${sets.length}×${sets[0].reps} · ${fmt(sets[0].kg)} kg`
     : sets.map((s) => `${fmt(s.kg)}×${s.reps}`).join(', ');
 };
+const targetText = (t) => t && [t.kg !== '' ? `${t.kg} kg` : '', t.reps, t.rir !== '' ? `RIR ${t.rir}` : '']
+  .filter(Boolean).join(' · ');
 
 const volume = (session) => session.exercises.reduce((v, ex) =>
-  v + ex.sets.reduce((a, s) => a + (s.done ? s.kg * s.reps : 0), 0), 0);
+  v + ex.sets.reduce((a, s) => a + (s.done && s.kg > 0 ? s.kg * s.reps : 0), 0), 0);
+const duration = (s) => (s.start && s.end ? clock(s.end - s.start) : '');
 
 function renderGym() {
-  if (state.active) return renderSession();
+  if (state.active) return state.active.kind === 'cardio' ? renderCardio() : renderSession();
   const next = nextRoutineId();
   let h = '<div class="section"><h2>Empezar</h2></div>';
   if (!state.routines.length) h += '<div class="card empty">Crea una rutina en Ajustes</div>';
   for (const r of state.routines) {
+    const sub = r.kind === 'cardio' ? esc(r.desc) : r.exercises.map((x) => esc(x.name)).join(', ');
     h += `<button class="routine-btn ${r.id === next ? 'next' : ''}" data-a="start" data-id="${r.id}">
-      <div class="play">▶</div>
+      <div class="play ${r.kind === 'cardio' ? 'cardio' : ''}">${r.kind === 'cardio' ? '🏃' : '▶'}</div>
       <div class="grow"><h3>${esc(r.name)}</h3>
-        <div class="muted small ellipsis">${r.id === next ? 'Toca hoy · ' : ''}${r.exercises.map((x) => esc(x.name)).join(', ')}</div>
+        <div class="muted small ellipsis">${r.id === next ? 'Toca hoy · ' : ''}${sub}</div>
       </div></button>`;
   }
 
   const recent = state.sessions.slice(-15).reverse();
   h += '<div class="section"><h2>Historial</h2>';
-  if (state.sessions.length) h += '<button class="btn ghost small" data-a="progress">Progreso ›</button>';
+  if (state.sessions.some((s) => s.exercises.length)) h += '<button class="btn ghost small" data-a="progress">Progreso ›</button>';
   h += '</div>';
   if (!recent.length) h += '<div class="card empty">Aún no hay entrenos</div>';
   else {
     h += '<div class="list">';
     for (const s of recent) {
+      const info = s.kind === 'cardio' ? esc(s.note || '') : `${fmt(volume(s), 0)} kg`;
       h += `<button class="item" data-a="showSession" data-id="${s.id}">
         <div class="grow"><b>${esc(s.routineName)}</b>
-          <div class="muted small">${niceDate(s.date)} · ${clock(s.end - s.start)} · ${fmt(volume(s), 0)} kg</div></div>
+          <div class="muted small ellipsis">${[niceDate(s.date), duration(s), info].filter(Boolean).join(' · ')}</div></div>
         <span class="muted">›</span></button>`;
     }
     h += '</div>';
@@ -202,33 +249,37 @@ function renderGym() {
   return h;
 }
 
-function renderSession() {
-  const a = state.active;
-  let h = `<div class="card session-head row between">
-    <div><h3>${esc(a.routineName)}</h3>
+const sessionHead = (a) => `<div class="card session-head row between">
+    <div class="grow"><h3 class="ellipsis">${esc(a.routineName)}</h3>
       <div class="small"><span class="timer" data-since="${a.start}"></span>
       <span class="rest" data-rest="${a.lastSetAt || ''}"></span></div></div>
     <button class="btn primary small" data-a="finish">Terminar</button></div>`;
 
+function renderSession() {
+  const a = state.active;
+  let h = sessionHead(a);
   a.exercises.forEach((ex, ei) => {
     const prev = lastSetsFor(ex.name);
-    const best = bestKg(ex.name);
-    h += `<div class="card ex-card"><div class="row between">
-      <div class="grow"><h3 class="ellipsis">${esc(ex.name)}</h3>
-      <div class="muted small">${prev ? 'Última: ' + summarize(prev) : 'Primera vez'}${best ? ` · Récord ${fmt(best)} kg` : ''}</div></div>
-      </div>
-      <div class="sets"><div class="set-head"><span>#</span><span>kg</span><span>reps</span><span></span></div>`;
+    const rec = records(ex.name);
+    h += `<div class="card ex-card"><h3>${esc(ex.name)}</h3>
+      ${ex.note ? `<div class="coach small">${esc(ex.note)}</div>` : ''}
+      <div class="muted small">${prev ? 'Última: ' + summarize(prev) : 'Primera vez'}${rec.rm ? ` · 1RM est. ${fmt(rec.rm)} kg` : ''}</div>
+      <div class="sets"><div class="set-head"><span>#</span><span>kg</span><span>reps</span><span>RIR</span><span></span></div>`;
     ex.sets.forEach((s, si) => {
+      const at = `data-e="${ei}" data-s="${si}"`;
       h += `<div class="set ${s.done ? 'done' : ''}">
         <span class="n">${si + 1}</span>
-        <input type="number" inputmode="decimal" step="0.5" value="${s.kg}" data-in="kg" data-e="${ei}" data-s="${si}">
-        <input type="number" inputmode="numeric" value="${s.reps}" data-in="reps" data-e="${ei}" data-s="${si}">
-        <button class="check" data-a="toggleSet" data-e="${ei}" data-s="${si}">✓</button></div>`;
+        <input type="number" inputmode="decimal" step="0.5" value="${s.kg}" data-in="kg" ${at}>
+        <input type="number" inputmode="numeric" value="${s.reps}" data-in="reps" ${at}>
+        <input type="number" inputmode="numeric" value="${s.rir}" data-in="rir" ${at}>
+        <button class="check" data-a="toggleSet" ${at}>✓</button></div>
+        ${s.t ? `<div class="target">Objetivo: ${esc(targetText(s.t))}</div>` : ''}`;
     });
     h += `</div><div class="row" style="margin-top:8px">
       <button class="btn ghost small" data-a="addSet" data-e="${ei}">+ Serie</button>
-      ${ex.sets.length > 1 ? `<button class="btn ghost small" data-a="removeSet" data-e="${ei}">− Serie</button>` : ''}
-      </div></div>`;
+      ${ex.sets.length > 1 ? `<button class="btn ghost small" data-a="removeSet" data-e="${ei}">− Serie</button>` : ''}</div>
+      <input type="text" class="cnote" placeholder="Tus notas" value="${esc(ex.cnote || '')}" data-in="cnote" data-e="${ei}">
+      </div>`;
   });
 
   h += `<button class="btn block" data-a="addExercise">+ Ejercicio extra</button>
@@ -236,29 +287,58 @@ function renderSession() {
   return h;
 }
 
+function renderCardio() {
+  const a = state.active;
+  const r = state.routines.find((x) => x.id === a.routineId);
+  const last = [...state.sessions].reverse().find((s) => s.routineId === a.routineId && s.note);
+  return `${sessionHead(a)}
+    <div class="card">${r && r.desc ? `<div class="coach">${esc(r.desc)}</div>` : ''}
+      ${last ? `<div class="muted small" style="margin-top:6px">Última vez (${niceDate(last.date)}): ${esc(last.note)}</div>` : ''}
+      <label class="field" style="margin:12px 0 0"><span>Qué has hecho</span>
+      <textarea data-in="note" style="min-height:110px;font-family:inherit;font-size:16px" placeholder="Tiempo, velocidad, inclinación, ritmo…">${esc(a.note || '')}</textarea></label>
+    </div>
+    <button class="btn danger block" data-a="discard">Descartar</button>`;
+}
+
 view.addEventListener('input', (e) => {
   const el = e.target;
-  if (!el.dataset.in || !state.active) return;
-  const set = state.active.exercises[el.dataset.e].sets[el.dataset.s];
-  set[el.dataset.in] = el.dataset.in === 'kg' ? num(el.value) : Math.round(num(el.value));
+  const a = state.active;
+  if (!el.dataset.in || !a) return;
+  const f = el.dataset.in;
+  if (f === 'note') a.note = el.value;
+  else if (f === 'cnote') a.exercises[el.dataset.e].cnote = el.value;
+  else {
+    const set = a.exercises[el.dataset.e].sets[el.dataset.s];
+    if (f === 'kg') set.kg = num(el.value);
+    else if (f === 'reps') set.reps = Math.round(num(el.value));
+    else set.rir = el.value === '' ? '' : num(el.value);
+  }
   save();
 });
+
+// Series de un ejercicio al empezar: las del plan, rellenas con lo que hiciste la última vez
+function buildSets(ex) {
+  const prev = lastSetsFor(ex.name);
+  const n = Math.max(ex.sets.length, prev ? prev.length : 0, 1);
+  let kgBefore = 0;
+  return Array.from({ length: n }, (_, i) => {
+    const t = ex.sets[i] || null;
+    const p = prev && (prev[i] || prev[prev.length - 1]);
+    const tKg = t ? numOrNull(t.kg) : null;
+    const s = p ? { kg: p.kg, reps: p.reps, rir: p.rir ?? '' }
+      : { kg: tKg ?? kgBefore, reps: t ? parseInt(t.reps, 10) || '' : '', rir: '' };
+    kgBefore = s.kg;
+    return { ...s, done: false, t: t && { ...t } };
+  });
+}
 
 actions.start = ({ id }) => {
   const r = state.routines.find((x) => x.id === id);
   if (!r) return;
   state.active = {
-    id: uid(), routineId: r.id, routineName: r.name, date: isoDate(), start: Date.now(), lastSetAt: null,
-    exercises: r.exercises.map((ex) => {
-      const prev = lastSetsFor(ex.name);
-      // Mismas series que la rutina (o más si la última vez hiciste extra), con los kg/reps de la última vez
-      const n = Math.max(ex.sets, prev ? prev.length : 0);
-      const sets = Array.from({ length: n }, (_, i) => {
-        const p = prev && (prev[i] || prev[prev.length - 1]);
-        return p ? { kg: p.kg, reps: p.reps, done: false } : { kg: ex.weight, reps: ex.reps, done: false };
-      });
-      return { name: ex.name, sets };
-    }),
+    id: uid(), routineId: r.id, routineName: r.name, kind: r.kind, date: isoDate(), start: Date.now(), lastSetAt: null,
+    note: '',
+    exercises: r.kind === 'cardio' ? [] : r.exercises.map((ex) => ({ name: ex.name, note: ex.note || '', cnote: '', sets: buildSets(ex) })),
   };
   save(); render(); window.scrollTo(0, 0);
 };
@@ -272,8 +352,8 @@ actions.toggleSet = ({ e, s }) => {
 
 actions.addSet = ({ e }) => {
   const sets = state.active.exercises[e].sets;
-  const last = sets[sets.length - 1] || { kg: 0, reps: 10 };
-  sets.push({ kg: last.kg, reps: last.reps, done: false });
+  const last = sets[sets.length - 1] || { kg: 0, reps: 10, rir: '' };
+  sets.push({ kg: last.kg, reps: last.reps, rir: last.rir, done: false, t: null });
   save(); render();
 };
 
@@ -290,11 +370,7 @@ actions.addExercise = () => {
     ok(fd) {
       const name = String(fd.get('name')).trim();
       if (!name) return;
-      const prev = lastSetsFor(name);
-      state.active.exercises.push({
-        name,
-        sets: prev ? prev.map((s) => ({ kg: s.kg, reps: s.reps, done: false })) : [{ kg: 0, reps: 10, done: false }],
-      });
+      state.active.exercises.push({ name, note: '', cnote: '', sets: buildSets({ name, sets: [{ kg: '', reps: '10', rir: '' }] }) });
       save(); closeDialog(); render();
     },
   });
@@ -302,12 +378,13 @@ actions.addExercise = () => {
 
 actions.finish = () => {
   const a = state.active;
-  const done = a.exercises.some((ex) => ex.sets.some((s) => s.done));
+  const cardio = a.kind === 'cardio';
+  const done = cardio || a.exercises.some((ex) => ex.sets.some((s) => s.done));
   if (!done && !confirm('No has marcado ninguna serie. ¿Terminar igualmente?')) return;
   a.end = Date.now();
   delete a.lastSetAt;
   a.exercises = a.exercises.filter((ex) => ex.sets.some((s) => s.done));
-  if (a.exercises.length) state.sessions.push(a);
+  if (cardio || a.exercises.length) state.sessions.push(a);
   state.active = null;
   save(); render(); window.scrollTo(0, 0);
   if (done) toast('Entreno guardado 💪');
@@ -322,11 +399,14 @@ actions.discard = () => {
 actions.showSession = ({ id }) => {
   const s = state.sessions.find((x) => x.id === id);
   if (!s) return;
-  const body = s.exercises.map((ex) =>
-    `<div class="row between small"><b class="grow ellipsis">${esc(ex.name)}</b><span class="muted">${summarize(ex.sets.filter((x) => x.done))}</span></div>`
-  ).join('');
+  const body = s.kind === 'cardio' ? `<div>${esc(s.note || 'Sin notas')}</div>` : s.exercises.map((ex) => {
+    const sets = ex.sets.filter((x) => x.done);
+    return `<div><div class="row between small"><b class="grow ellipsis">${esc(ex.name)}</b><span class="muted">${summarize(sets)}</span></div>
+      ${ex.cnote ? `<div class="muted small">📝 ${esc(ex.cnote)}</div>` : ''}</div>`;
+  }).join('');
   openDialog(`<h2>${esc(s.routineName)}</h2>
-    <div class="muted small" style="margin-bottom:12px">${niceDate(s.date, { weekday: 'long', day: 'numeric', month: 'long' })} · ${clock(s.end - s.start)} · ${fmt(volume(s), 0)} kg movidos</div>
+    <div class="muted small" style="margin-bottom:12px">${[niceDate(s.date, { weekday: 'long', day: 'numeric', month: 'long' }), duration(s),
+      s.kind === 'cardio' ? '' : `${fmt(volume(s), 0)} kg movidos`].filter(Boolean).join(' · ')}</div>
     <div class="stack">${body}</div>
     <div class="actions"><button class="btn danger left" data-d="del">Borrar</button>
     <button class="btn primary" data-d="close">Cerrar</button></div>`, {
@@ -345,10 +425,11 @@ actions.progress = () => {
     for (const s of state.sessions) {
       const ex = s.exercises.find((e) => e.name === name);
       if (!ex) continue;
-      const kg = Math.max(...ex.sets.filter((x) => x.done).map((x) => x.kg), 0);
-      pts.push({ date: s.date, v: kg });
+      const rm = Math.max(...ex.sets.filter((x) => x.done).map(e1rm), 0);
+      if (rm) pts.push({ date: s.date, v: rm });
     }
-    return `${chart(pts, {})}<div class="muted small" style="margin-top:6px">Peso máximo por sesión · Récord ${fmt(bestKg(name))} kg</div>`;
+    const rec = records(name);
+    return `${chart(pts, {})}<div class="muted small" style="margin-top:6px">1RM estimado por sesión · Récord ${fmt(rec.kg)} kg · 1RM máx. ${fmt(rec.rm)} kg</div>`;
   };
   openDialog(`<h2>Progreso</h2>
     <select name="ex" id="prog-ex">${names.map((n) => `<option>${esc(n)}</option>`).join('')}</select>
@@ -581,7 +662,7 @@ function renderSettings() {
   const tg = state.targets;
   let h = '<div class="section"><h2>Rutinas</h2><button class="btn ghost small" data-a="editRoutine">+ Nueva</button></div><div class="list">';
   h += state.routines.map((r) => `<button class="item" data-a="editRoutine" data-id="${r.id}">
-    <div class="grow"><b>${esc(r.name)}</b><div class="muted small">${r.exercises.length} ejercicios</div></div><span class="muted">›</span></button>`).join('')
+    <div class="grow"><b>${esc(r.name)}</b><div class="muted small">${r.kind === 'cardio' ? 'Cardio' : `${r.exercises.length} ejercicios`}</div></div><span class="muted">›</span></button>`).join('')
     || '<div class="empty">Sin rutinas</div>';
   h += '</div>';
 
@@ -616,31 +697,63 @@ view.addEventListener('change', (e) => {
   if (el.id === 'import' && el.files[0]) importData(el.files[0]);
 });
 
-// Formato de rutina: una línea por ejercicio, p. ej. "Press banca 4x8 60"
-const exLine = (x) => `${x.name} ${x.sets}x${x.reps}${x.weight ? ' ' + fmt(x.weight).replace(',', '.') : ''}`;
+// Formato de rutina: una línea por ejercicio
+//   Press banca | 90x3-5@1-2, 85x4-8@1-2, 85x4-8@1-2 | Pausa en el pecho
+// Cada serie es kg x reps @ RIR (todo opcional: "AMRAP", "x10", "-30xAMRAP").
+// También vale la forma corta "Press banca 4x8 60".
+function setToken(s) {
+  const left = s.kg !== '' && s.reps !== '' ? `${s.kg}x${s.reps}` : s.kg !== '' ? s.kg : numOrNull(s.reps) !== null ? `x${s.reps}` : s.reps;
+  return left + (s.rir !== '' ? `@${s.rir}` : '');
+}
+const exLine = (x) => [x.name, x.sets.map(setToken).join(', '), x.note].filter(Boolean).join(' | ');
+
+function parseSet(tok) {
+  const [left, rir = ''] = tok.split('@').map((p) => p.trim());
+  const m = left.match(/^(-?\d+(?:[.,]\d+)?)?\s*[x×]\s*(.+)$/i);
+  if (m) return { kg: m[1] || '', reps: m[2].trim(), rir };
+  if (numOrNull(left) !== null) return { kg: left, reps: '', rir };
+  return { kg: '', reps: left, rir };
+}
+
 function parseExercises(text) {
   return text.split('\n').map((l) => l.trim()).filter(Boolean).map((l) => {
-    const m = l.match(/^(.*?)\s+(\d+)\s*[x×*]\s*(\d+)(?:\s+(\d+(?:[.,]\d+)?)\s*(?:kg)?)?\s*$/i);
-    return m ? { id: uid(), name: m[1].trim(), sets: +m[2], reps: +m[3], weight: m[4] ? num(m[4]) : 0 }
-      : { id: uid(), name: l, sets: 3, reps: 10, weight: 0 };
+    if (l.includes('|')) {
+      const [name, sets = '', ...note] = l.split('|').map((p) => p.trim());
+      const parsed = sets.split(',').map((t) => t.trim()).filter(Boolean).map(parseSet);
+      return { id: uid(), name, note: note.join(' | '), sets: parsed.length ? parsed : [{ kg: '', reps: '', rir: '' }] };
+    }
+    const m = l.match(/^(.*?)\s+(\d+)\s*[x×*]\s*(\d+(?:-\d+)?)(?:\s+(-?\d+(?:[.,]\d+)?)\s*(?:kg)?)?\s*$/i);
+    if (m) return { id: uid(), name: m[1].trim(), note: '', sets: Array.from({ length: +m[2] }, () => ({ kg: m[4] || '', reps: m[3], rir: '' })) };
+    return { id: uid(), name: l, note: '', sets: Array.from({ length: 3 }, () => ({ kg: '', reps: '', rir: '' })) };
   });
 }
 
 actions.editRoutine = ({ id }) => {
   const r = state.routines.find((x) => x.id === id);
+  const kind = r ? r.kind : 'gym';
   openDialog(`<h2>${r ? 'Editar rutina' : 'Nueva rutina'}</h2>
-    <label class="field"><span>Nombre</span><input type="text" name="name" value="${esc(r?.name || '')}" autocomplete="off"></label>
-    <label class="field"><span>Ejercicios — uno por línea: nombre series×reps kg</span>
-      <textarea name="ex" placeholder="Press banca 4x8 60&#10;Dominadas 4x8&#10;Curl bíceps 3x12 12">${esc(r ? r.exercises.map(exLine).join('\n') : '')}</textarea></label>
-    <div class="muted small">El primer día usa estos kg. Después, cada entreno se rellena con lo que hiciste la última vez.</div>
+    <div class="row"><label class="field grow"><span>Nombre</span><input type="text" name="name" value="${esc(r?.name || '')}" autocomplete="off"></label>
+    <label class="field" style="width:120px"><span>Tipo</span><select name="kind" id="r-kind">
+      <option value="gym" ${kind === 'gym' ? 'selected' : ''}>Pesas</option><option value="cardio" ${kind === 'cardio' ? 'selected' : ''}>Cardio</option></select></label></div>
+    <div id="r-gym" ${kind === 'cardio' ? 'hidden' : ''}>
+      <label class="field"><span>Ejercicios — uno por línea: nombre | kg x reps @ RIR, … | nota</span>
+      <textarea name="ex" placeholder="Press banca | 90x3-5@1-2, 85x4-8@1-2 | Pausa en el pecho&#10;Dominadas | AMRAP, AMRAP&#10;Curl bíceps 3x12 12">${esc(r ? r.exercises.map(exLine).join('\n') : '')}</textarea></label>
+      <div class="muted small">Estos son los objetivos. Al empezar, cada serie se rellena con lo que hiciste la última vez.</div>
+    </div>
+    <label class="field" id="r-cardio" ${kind === 'cardio' ? '' : 'hidden'}><span>Qué toca</span>
+      <textarea name="desc" style="min-height:90px;font-family:inherit">${esc(r?.desc || '')}</textarea></label>
     <div class="actions">${r ? '<button class="btn danger left" data-d="del">Borrar</button>' : ''}
       ${r && state.routines.length > 1 ? '<button class="btn" data-d="up">↑</button>' : ''}
       <button class="btn" data-d="cancel">Cancelar</button><button class="btn primary" data-d="ok">Guardar</button></div>`, {
     ok(fd) {
-      const name = String(fd.get('name')).trim() || 'Rutina';
-      const exercises = parseExercises(String(fd.get('ex')));
-      if (r) Object.assign(r, { name, exercises });
-      else state.routines.push({ id: uid(), name, exercises });
+      const data = {
+        name: String(fd.get('name')).trim() || 'Rutina',
+        kind: fd.get('kind'),
+        desc: String(fd.get('desc') || '').trim(),
+        exercises: parseExercises(String(fd.get('ex') || '')),
+      };
+      if (r) Object.assign(r, data);
+      else state.routines.push({ id: uid(), ...data });
       save(); closeDialog(); render();
     },
     up() {
@@ -653,6 +766,10 @@ actions.editRoutine = ({ id }) => {
       state.routines = state.routines.filter((x) => x !== r);
       save(); closeDialog(); render();
     },
+  });
+  $('#r-kind').addEventListener('change', (e) => {
+    $('#r-gym').hidden = e.target.value === 'cardio';
+    $('#r-cardio').hidden = e.target.value !== 'cardio';
   });
 };
 
@@ -694,7 +811,7 @@ function importData(file) {
       const data = JSON.parse(reader.result);
       if (!data || !Array.isArray(data.routines) || !Array.isArray(data.sessions)) throw new Error();
       if (!confirm('Esto reemplaza todos tus datos actuales por los de la copia. ¿Seguir?')) return;
-      state = { ...defaultState(), ...data };
+      state = migrate({ ...defaultState(), ...data });
       save(); render(); toast('Copia importada');
     } catch { toast('Archivo no válido'); }
   };

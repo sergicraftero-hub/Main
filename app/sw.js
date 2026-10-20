@@ -1,5 +1,5 @@
 // Cachea la app para que funcione sin conexión. Sube CACHE al cambiar archivos.
-const CACHE = 'gym-v1';
+const CACHE = 'gym-v3';
 const FILES = [
   './',
   'index.html',
