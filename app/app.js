@@ -135,7 +135,7 @@ dialogForm.addEventListener('submit', (e) => {
 // ---------- Navegación ----------
 
 let tab = sessionStorage.getItem('tab') || 'gym';
-const TITLES = { gym: 'Entreno', weight: 'Peso', diet: 'Dieta', settings: 'Ajustes' };
+const TITLES = { gym: 'Entreno', progress: 'Progreso', weight: 'Peso', diet: 'Dieta', settings: 'Ajustes' };
 const view = $('#view');
 
 document.querySelector('.tabs').addEventListener('click', (e) => {
@@ -150,7 +150,7 @@ document.querySelector('.tabs').addEventListener('click', (e) => {
 function render() {
   $('#title').textContent = TITLES[tab];
   document.querySelectorAll('.tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === tab));
-  view.innerHTML = ({ gym: renderGym, weight: renderWeight, diet: renderDiet, settings: renderSettings })[tab]();
+  view.innerHTML = ({ gym: renderGym, progress: renderProgress, weight: renderWeight, diet: renderDiet, settings: renderSettings })[tab]();
   tick();
 }
 
@@ -234,7 +234,6 @@ function renderGym() {
 
   const recent = state.sessions.slice(-15).reverse();
   h += '<div class="section"><h2>Historial</h2>';
-  if (state.sessions.some((s) => s.exercises.length)) h += '<button class="btn ghost small" data-a="progress">Progreso ›</button>';
   h += '</div>';
   if (!recent.length) h += '<div class="card empty">Aún no hay entrenos</div>';
   else {
@@ -420,22 +419,26 @@ actions.showSession = ({ id }) => {
   });
 };
 
-actions.progress = () => {
+actions.progress = ({ name: initial } = {}) => {
   const names = [...new Set(state.sessions.flatMap((s) => s.exercises.map((e) => e.name)))].sort();
   const draw = (name) => {
-    const pts = [];
+    // Mejor 1RM estimado de cada semana
+    const byWeek = new Map();
     for (const s of state.sessions) {
-      const ex = s.exercises.find((e) => e.name === name);
+      const ex = s.exercises.find((e) => same(e.name, name));
       if (!ex) continue;
       const rm = Math.max(...ex.sets.filter((x) => x.done).map(e1rm), 0);
-      if (rm) pts.push({ date: s.date, v: rm });
+      const wk = weekStart(s.date);
+      if (rm && rm > (byWeek.get(wk) || 0)) byWeek.set(wk, rm);
     }
+    const pts = [...byWeek].sort().map(([date, v]) => ({ date, v }));
     const rec = records(name);
-    return `${chart(pts, {})}<div class="muted small" style="margin-top:6px">1RM estimado por sesión · Récord ${fmt(rec.kg)} kg · 1RM máx. ${fmt(rec.rm)} kg</div>`;
+    return `${chart(pts, {})}<div class="muted small" style="margin-top:6px">Mejor 1RM estimado de cada semana · Récord ${fmt(rec.kg)} kg · 1RM máx. ${fmt(rec.rm)} kg</div>`;
   };
-  openDialog(`<h2>Progreso</h2>
-    <select name="ex" id="prog-ex">${names.map((n) => `<option>${esc(n)}</option>`).join('')}</select>
-    <div id="prog-chart" style="margin-top:12px">${names.length ? draw(names[0]) : ''}</div>
+  const sel = names.find((n) => initial && same(n, initial)) || names[0];
+  openDialog(`<h2>Evolución</h2>
+    <select name="ex" id="prog-ex">${names.map((n) => `<option ${n === sel ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select>
+    <div id="prog-chart" style="margin-top:12px">${names.length ? draw(sel) : ''}</div>
     <div class="actions"><button class="btn primary" data-d="close">Cerrar</button></div>`);
   $('#prog-ex').addEventListener('change', (e) => { $('#prog-chart').innerHTML = draw(e.target.value); });
 };
@@ -555,6 +558,159 @@ actions.delWeight = ({ date }) => {
   if (!confirm(`¿Borrar el peso del ${niceDate(date)}?`)) return;
   state.weights = state.weights.filter((w) => w.date !== date);
   save(); render();
+};
+
+// ---------- Progreso (semanal) ----------
+
+const weekStart = (iso) => { const d = parseDate(iso); return addDays(iso, -((d.getDay() + 6) % 7)); };
+const avg = (xs) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
+const DAY_NAMES = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
+let weekOffset = 0;
+
+// Rutina planificada para cada día (lunes = 0) según el día que lleva en el nombre
+const planByDay = () => DAY_NAMES.map((d) => state.routines.find((r) => plain(r.name).includes(d)) || null);
+
+function weekStats(start) {
+  const end = addDays(start, 6);
+  const sessions = state.sessions.filter((s) => s.date >= start && s.date <= end);
+  const gym = sessions.filter((s) => s.kind !== 'cardio');
+  const days = Object.keys(state.diet).filter((d) => d >= start && d <= end).map((d) => macros(state.diet[d]));
+  return {
+    sessions,
+    volume: gym.reduce((v, s) => v + volume(s), 0),
+    sets: gym.reduce((n, s) => n + s.exercises.reduce((m, ex) => m + ex.sets.filter((x) => x.done).length, 0), 0),
+    weight: avg(state.weights.filter((w) => w.date >= start && w.date <= end).map((w) => w.kg)),
+    kcal: avg(days.map((t) => t.kcal)),
+    protein: avg(days.map((t) => t.protein)),
+    dietDays: days.length,
+  };
+}
+
+// Cambio entre dos valores; good = 1 si subir es bueno, -1 si bajar es bueno
+function delta(now, before, { unit = '', pct = false, good = 1, d = 1 } = {}) {
+  if (now == null || before == null || (pct && !before)) return '<span class="muted">—</span>';
+  const v = pct ? ((now - before) / before) * 100 : now - before;
+  if (Math.abs(v) < (pct ? 0.5 : 0.05)) return '<span class="muted">=</span>';
+  const cls = v * good > 0 ? 'good' : 'bad';
+  return `<span class="${cls}">${v > 0 ? '+' : ''}${fmt(v, pct ? 0 : d)}${pct ? '%' : unit}</span>`;
+}
+
+// Mejor serie de cada ejercicio en un rango de fechas (o en una lista de sesiones)
+function bestByExercise(from, to, sessions = state.sessions) {
+  const out = new Map();
+  for (const s of sessions) {
+    if (s.date < from || s.date > to) continue;
+    for (const ex of s.exercises) for (const st of ex.sets) {
+      if (!st.done) continue;
+      const key = ex.name.trim().toLowerCase();
+      const cur = out.get(key);
+      if (!cur || e1rm(st) > cur.rm || (!cur.rm && st.reps > cur.set.reps)) out.set(key, { name: ex.name, rm: e1rm(st), set: st });
+    }
+  }
+  return out;
+}
+
+function renderProgress() {
+  const today = isoDate();
+  const start = addDays(weekStart(today), weekOffset * 7);
+  const end = addDays(start, 6);
+  const prevStart = addDays(start, -7);
+  const cur = weekStats(start), prev = weekStats(prevStart);
+  const plan = planByDay();
+  const planned = plan.filter(Boolean).length || state.routines.length;
+  const label = weekOffset === 0 ? 'Esta semana' : weekOffset === -1 ? 'Semana pasada'
+    : `Semana del ${niceDate(start, { day: 'numeric', month: 'short' })}`;
+
+  let h = `<div class="daynav"><button class="btn" data-a="week" data-n="-1">‹</button>
+    <div><b>${label}</b><div class="muted small">${niceDate(start, { day: 'numeric', month: 'short' })} – ${niceDate(end, { day: 'numeric', month: 'short' })}</div></div>
+    <button class="btn" data-a="week" data-n="1" ${weekOffset >= 0 ? 'disabled style="opacity:.3"' : ''}>›</button></div>`;
+
+  // Días de la semana: qué tocaba y qué se hizo
+  h += '<div class="list" style="margin-top:10px">';
+  for (let i = 0; i < 7; i++) {
+    const date = addDays(start, i);
+    const done = cur.sessions.filter((s) => s.date === date);
+    const r = plan[i];
+    let status;
+    if (done.length) status = '<span class="chip ok">✓ Hecho</span>';
+    else if (!r) status = '<span class="muted small">Descanso</span>';
+    else if (date === today) status = '<span class="chip accent">Hoy</span>';
+    else if (date < today) status = '<span class="chip bad">✗ No hecho</span>';
+    else status = '<span class="muted small">Pendiente</span>';
+    const name = done.length ? done.map((s) => esc(s.routineName)).join(' + ') : r ? esc(r.name) : '';
+    const tag = done.length ? `button class="item" data-a="showSession" data-id="${done[0].id}"` : 'div class="item"';
+    h += `<${tag}><div class="day ${date === today ? 'today' : ''}">${niceDate(date, { weekday: 'short' })}<b>${parseDate(date).getDate()}</b></div>
+      <div class="grow ellipsis">${name}</div>${status}</${tag.split(' ')[0]}>`;
+  }
+  h += '</div>';
+
+  // Resumen frente a la semana anterior
+  const tg = state.targets;
+  h += `<div class="section"><h2>Resumen</h2><span class="muted small">vs semana anterior</span></div>
+    <div class="stats">
+      <div class="stat"><b>${cur.sessions.length}<small>/${planned}</small></b><span>Entrenos ${delta(cur.sessions.length, prev.sessions.length, { d: 0 })}</span></div>
+      <div class="stat"><b>${fmt(cur.volume / 1000, 1)}<small> t</small></b><span>Volumen ${delta(cur.volume, prev.volume, { pct: true })}</span></div>
+      <div class="stat"><b>${cur.sets}</b><span>Series ${delta(cur.sets, prev.sets, { d: 0 })}</span></div>
+      <div class="stat"><b>${cur.weight != null ? fmt(cur.weight) : '—'}</b><span>Peso medio ${delta(cur.weight, prev.weight, { unit: ' kg', good: -1 })}</span></div>
+      <div class="stat"><b>${cur.kcal != null ? fmt(cur.kcal, 0) : '—'}</b><span>kcal/día${tg.kcal ? ` · obj ${tg.kcal}` : ''}</span></div>
+      <div class="stat"><b>${cur.protein != null ? fmt(cur.protein, 0) : '—'}<small> g</small></b><span>Prot/día${tg.protein ? ` · obj ${tg.protein}` : ''}</span></div>
+    </div>`;
+
+  // Evolución de cada ejercicio hecho esta semana frente a la última vez anterior
+  const now = bestByExercise(start, end);
+  const earlier = state.sessions.filter((s) => s.date < start);
+  const record = bestByExercise('0000-00-00', '9999-99-99', earlier);
+  // La última vez que lo hiciste antes de esta semana
+  const lastTime = (key) => {
+    for (let i = earlier.length - 1; i >= 0; i--) {
+      const b = bestByExercise('0000-00-00', '9999-99-99', [earlier[i]]).get(key);
+      if (b) return b;
+    }
+    return null;
+  };
+  h += '<div class="section"><h2>Ejercicios</h2><span class="muted small">mejor serie · 1RM est.</span></div>';
+  if (!now.size) h += '<div class="card empty">Sin entrenos de pesas esta semana</div>';
+  else {
+    h += '<div class="list">';
+    for (const [key, b] of [...now].sort((x, y) => x[1].name.localeCompare(y[1].name))) {
+      const old = lastTime(key);
+      const rec = record.get(key);
+      const pr = rec && b.rm > rec.rm + 0.01;
+      const set = `${fmt(b.set.kg)}×${b.set.reps}${b.set.rir !== '' ? ` @${b.set.rir}` : ''}`;
+      h += `<button class="item" data-a="progress" data-name="${esc(b.name)}">
+        <div class="grow"><b class="ellipsis" style="display:block">${pr ? '🏆 ' : ''}${esc(b.name)}</b>
+        <span class="muted small">${set}${old ? ` · antes ${fmt(old.set.kg)}×${old.set.reps}` : ' · primera vez'}</span></div>
+        <div style="text-align:right"><b>${b.rm ? fmt(b.rm) : '—'}</b><div class="small">${old && b.rm ? delta(b.rm, old.rm, { unit: ' kg' }) : ''}</div></div></button>`;
+    }
+    h += '</div>';
+  }
+
+  // Peso semana a semana
+  const weeks = [];
+  for (let i = 11; i >= 0; i--) {
+    const ws = addDays(weekStart(today), -i * 7);
+    const w = avg(state.weights.filter((x) => x.date >= ws && x.date <= addDays(ws, 6)).map((x) => x.kg));
+    if (w != null) weeks.push({ date: ws, v: w });
+  }
+  h += `<div class="section"><h2>Peso por semanas</h2>${tg.weightRate ? `<span class="muted small">Ritmo objetivo −${fmt(tg.weightRate)} kg/sem</span>` : ''}</div>`;
+  if (!weeks.length) h += '<div class="card empty">Apunta tu peso en la pestaña Peso (2-3 días por semana)</div>';
+  else {
+    h += `<div class="card">${chart(weeks, { goal: tg.weightGoal })}</div><div class="list">`;
+    weeks.slice().reverse().forEach((w, i, arr) => {
+      const p = arr[i + 1];
+      const ch = p ? w.v - p.v : null;
+      const onPace = ch != null && tg.weightRate ? (ch <= -tg.weightRate + 0.05 ? ' ✓' : '') : '';
+      h += `<div class="item"><div class="grow">Semana del ${niceDate(w.date, { day: 'numeric', month: 'short' })}</div>
+        <b>${fmt(w.v)} kg</b><span class="small" style="min-width:64px;text-align:right">${p ? delta(w.v, p.v, { unit: '', good: -1 }) + onPace : ''}</span></div>`;
+    });
+    h += '</div>';
+  }
+  return h;
+}
+
+actions.week = ({ n }) => {
+  weekOffset = Math.min(0, weekOffset + Number(n));
+  render();
 };
 
 // ---------- Dieta ----------
@@ -678,7 +834,8 @@ function renderSettings() {
     <div class="row"><label class="field grow"><span>kcal / día</span><input type="number" inputmode="numeric" data-t="kcal" value="${tg.kcal}"></label>
     <label class="field grow"><span>Proteína g / día</span><input type="number" inputmode="numeric" data-t="protein" value="${tg.protein}"></label></div>
     <div class="row"><label class="field grow"><span>Peso objetivo (kg)</span><input type="number" inputmode="decimal" data-t="weightGoal" value="${tg.weightGoal ?? ''}"></label>
-    <label class="field grow"><span>Descanso (seg)</span><input type="number" inputmode="numeric" data-t="rest" value="${tg.rest}"></label></div></div>`;
+    <label class="field grow"><span>Bajar kg / semana</span><input type="number" inputmode="decimal" data-t="weightRate" value="${tg.weightRate ?? ''}"></label></div>
+    <div class="row"><label class="field grow"><span>Descanso (seg)</span><input type="number" inputmode="numeric" data-t="rest" value="${tg.rest}"></label><div class="grow"></div></div></div>`;
 
   h += `<div class="section"><h2>Copia de seguridad</h2></div><div class="card stack">
     <div class="muted small">Tus datos solo están en este iPhone. Exporta una copia de vez en cuando (a Archivos / iCloud Drive).</div>
@@ -694,7 +851,7 @@ view.addEventListener('change', (e) => {
   const el = e.target;
   if (el.dataset.t) {
     const v = el.value === '' ? null : num(el.value);
-    state.targets[el.dataset.t] = el.dataset.t === 'weightGoal' ? v : (v ?? 0);
+    state.targets[el.dataset.t] = ['weightGoal', 'weightRate'].includes(el.dataset.t) ? v : (v ?? 0);
     save(); toast('Guardado');
   }
   if (el.id === 'import' && el.files[0]) importData(el.files[0]);

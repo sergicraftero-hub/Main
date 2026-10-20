@@ -8,6 +8,9 @@ los datos se guardan solo en tu iPhone.
 - **Entreno**: tus rutinas (Día A/B/C…). Al empezar una, cada ejercicio aparece ya relleno con los kg
   y reps de la última vez; solo vas marcando ✓. Cronómetro de sesión y de descanso, récords,
   historial y gráfica de progreso por ejercicio. Resalta la rutina que te toca hoy.
+- **Progreso**: vista semanal (lunes a domingo) con lo que tocaba y lo que hiciste, resumen frente a la
+  semana anterior (entrenos, volumen, series, peso medio, kcal y proteína), evolución de cada ejercicio
+  (mejor serie, 1RM estimado, récords 🏆) y peso medio por semana frente al ritmo objetivo.
 - **Peso**: un registro al día, gráfica de 90 días con media de 7 días, cambio a 7 y 30 días, peso objetivo.
 - **Dieta**: tus comidas habituales como botones de un toque, totales de kcal y proteína frente a tu objetivo,
   "copiar del día anterior" y comidas puntuales.
