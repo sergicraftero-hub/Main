@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Política de privacidad</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main class="legal">
+  <a class="back" href="index.html">← Volver</a>
+  <h1>Política de privacidad</h1>
+  <h2>Responsable del tratamiento</h2>
+  <p data-cfg="legal"></p>
+  <h2>Datos que tratamos y finalidad</h2>
+  <p>Tratamos el nombre, teléfono, código postal y tipo de inmueble que nos facilitas para contactarte por teléfono o WhatsApp y enviarte información y presupuesto de sistemas de alarma ADT, de los que somos distribuidor autorizado.</p>
+  <h2>Legitimación</h2>
+  <p>Tu consentimiento, otorgado al marcar la casilla del formulario o al escribirnos por WhatsApp.</p>
+  <h2>Conservación</h2>
+  <p>Conservaremos tus datos mientras sean necesarios para atender tu solicitud y, como máximo, 12 meses si no llegas a contratar.</p>
+  <h2>Destinatarios</h2>
+  <p>Si decides contratar, tus datos se comunicarán a ADT para formalizar el contrato y prestar el servicio. No se cederán a otros terceros salvo obligación legal. Los mensajes se envían a través de WhatsApp (Meta Platforms), conforme a sus propias condiciones.</p>
+  <h2>Tus derechos</h2>
+  <p>Puedes ejercer tus derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad escribiendo a <span data-cfg="email"></span>, y reclamar ante la Agencia Española de Protección de Datos (www.aepd.es).</p>
+  <h2>Cookies</h2>
+  <p>Esta web no utiliza cookies propias de análisis ni de publicidad.</p>
+</main>
+<script src="config.js"></script>
+<script>document.querySelectorAll("[data-cfg]").forEach(function(e){e.textContent=CONFIG[e.getAttribute("data-cfg")]});</script>
+</body>
+</html>

@@ -1,9 +1,8 @@
-name: Publicar app
+name: Publicar landing
 
 on:
   push:
     branches: [main, claude/private-iphone-app-lab5rh]
-    paths: ['app/**', '.github/workflows/pages.yml']
   workflow_dispatch:
 
 permissions:
@@ -26,6 +25,6 @@ jobs:
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: app
+          path: .
       - id: deployment
         uses: actions/deploy-pages@v4
