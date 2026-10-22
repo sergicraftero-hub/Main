@@ -333,7 +333,7 @@ public final class PropManager {
                             for (int i = 0; i < 4; i++) {
                                 sign.getSide(Side.FRONT).line(i, i < lines.size() ? Msg.parse(lines.get(i)) : Component.empty());
                             }
-                            sign.setWaxed(true);
+                            Cosmetic.apply(() -> sign.setWaxed(true));
                             sign.update(true, false);
                         }
                     }
