@@ -1,0 +1,80 @@
+# Lobby (hub). El mapa se genera con el constructor "lobby" y se pega una vez.
+# Para regenerarlo: /eradmin build lobby y reinicia. Para editarlo a mano: /eradmin editor lobby
+# Las posiciones "@nombre" son marcadores del mapa (/eradmin marker list estando en el editor).
+
+world: er_lobby
+template: lobby
+origin: [-50, 64, -50]     # esquina del mapa en el mundo (el centro de la plaza queda en 0, 77, 0)
+spawn: "@spawn"
+time: 6000
+void-y: -8
+
+npcs:
+  guide:
+    at: "@npc.guide"
+    name: "<gold><b>Guía</b>"
+    subtitle: "<gray>¿Primera vez? Habla conmigo"
+    profession: librarian
+    action: "room:tutorial"
+    talk:
+      - "¡Hola, <player>! Aquí todo son salas de escape: encuentra pistas, resuelve puzles y escapa antes de que se acabe el tiempo."
+      - "Si es tu primera vez, juega el <gold>Tutorial</gold>: dura 10 minutos y te enseña todo."
+  top:
+    at: "@npc.top"
+    name: "<yellow><b>Rankings</b>"
+    subtitle: "<gray>Los mejores equipos"
+    profession: cartographer
+    action: "menu:top"
+  shop:
+    at: "@npc.shop"
+    name: "<light_purple><b>Tienda</b>"
+    subtitle: "<gray>Salas premium y cosméticos"
+    profession: cleric
+    action: "menu:shop"
+  quests:
+    at: "@npc.quests"
+    name: "<yellow><b>Misiones</b>"
+    subtitle: "<gray>Diarias y semanales"
+    profession: librarian
+    action: "menu:quests"
+  daily:
+    at: "@npc.daily"
+    name: "<green><b>Recompensa diaria</b>"
+    subtitle: "<gray>¡Pasa cada día!"
+    profession: farmer
+    action: "menu:daily"
+  cosmetics:
+    at: "@npc.cosmetics"
+    name: "<red><b>Cosméticos</b>"
+    subtitle: "<gray>Títulos, estelas y más"
+    profession: armorer
+    action: "menu:cosmetics"
+
+portals:
+  cine: {region: "@portal.cine", action: "wing:cine"}
+  anime: {region: "@portal.anime", action: "wing:anime"}
+  videojuegos: {region: "@portal.videojuegos", action: "wing:videojuegos"}
+  originales: {region: "@portal.originales", action: "wing:originales"}
+
+holograms:
+  welcome:
+    at: "@holo.welcome"
+    lines:
+      - "<gradient:#FFB347:#FF6B6B><b><server></b></gradient>"
+      - "<gray>Salas de escape de una hora · 1 a 10 jugadores"
+      - "<yellow>Entra por un arco o usa la <gold>brújula</gold>"
+  levels: {at: "@holo.levels", type: levels, height: 1.5}
+  top_alquimista: {at: "@holo.room1", type: room, room: alquimista, height: 1.5, lines: 5}
+  top_expreso: {at: "@holo.room2", type: room, room: expreso, height: 1.5, lines: 5}
+  top_tutorial: {at: "@holo.room3", type: room, room: tutorial, height: 1.5, lines: 5}
+  cine: {at: "@holo.cine", height: 3, lines: ["<red><b>🎬 CINE</b>", "<gray>Entra por el arco"]}
+  anime: {at: "@holo.anime", height: 3, lines: ["<light_purple><b>🌸 ANIME</b>", "<gray>Entra por el torii"]}
+  videojuegos: {at: "@holo.videojuegos", height: 3, lines: ["<green><b>🎮 VIDEOJUEGOS</b>", "<gray>Entra por el arco"]}
+  originales: {at: "@holo.originales", height: 3, lines: ["<gold><b>🔮 ORIGINALES</b>", "<gray>Entra por el arco"]}
+
+parkour:
+  start: "@parkour.start"
+  start-spawn: "@parkour.start.spawn"
+  checkpoints: ["@parkour.cp.*"]
+  end: "@parkour.end"
+  reward-keys: 50

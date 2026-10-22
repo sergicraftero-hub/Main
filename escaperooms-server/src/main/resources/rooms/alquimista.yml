@@ -1,0 +1,570 @@
+# ─────────────────────────────────────────────────────────────
+#  La Torre del Alquimista (remasterizada)
+#  Patio → vestíbulo/biblioteca → laboratorio → observatorio → cripta → túnel
+#  23 puzles, ramas en paralelo. 45-60 minutos.
+# ─────────────────────────────────────────────────────────────
+name: "<gold><b>La Torre del Alquimista</b>"
+wing: originales
+difficulty: media
+order: 1
+template: alquimista
+description:
+  - "<gray>1347. El alquimista Aurelio Vance"
+  - "<gray>murió buscando la Piedra Filosofal."
+  - "<gray>Su torre se derrumbará a medianoche:"
+  - "<gray>completad la Gran Obra y escapad."
+icon: {material: BREWING_STAND, model: "escape:room_alchemist"}
+players: {min: 1, max: 10, recommended: 4}
+time-limit: 60
+estimated-minutes: 50
+access: {level: 1}
+atmosphere: {time: 18000}
+spawn: "@spawn"
+void-y: 0
+stars:
+  two: {time: 50, hints: 4}
+  three: {time: 38, hints: 1}
+hints: {max: 12, penalty: 60s}
+rewards:
+  xp: 700
+  keys: 120
+  xp-per-star: 150
+  first-time: {xp: 1000, keys: 250}
+
+intro:
+  interval: 80
+  lines:
+    - "<gold>Año 1347. Una noche sin luna."
+    - "<gray>El alquimista <gold>Aurelio Vance</gold> murió buscando la Piedra Filosofal."
+    - "<gray>Su último experimento maldijo la torre: <red>a medianoche se derrumbará.</red>"
+    - "<gray>Solo completando la <gold>Gran Obra</gold> encontraréis la salida."
+
+items:
+  cuerda: {material: LEAD, model: "escape:rope", name: "<yellow>Cuerda de cáñamo", lore: ["<gray>Larga y resistente."]}
+  gancho: {material: TRIPWIRE_HOOK, model: "escape:hook", name: "<gray>Gancho oxidado", lore: ["<gray>Le falta algo para ser útil."]}
+  garfio: {material: CHAIN, model: "escape:grapple", name: "<gold>Garfio con cuerda", lore: ["<gray>Perfecto para pescar algo", "<gray>del fondo de un pozo."], glow: true}
+  sello_agua: {material: HEART_OF_THE_SEA, model: "escape:seal_water", name: "<aqua><b>Sello del Agua</b> 🜄", lore: ["<gray>Uno de los tres sellos de la torre."], glow: true}
+  sello_tierra: {material: EMERALD, model: "escape:seal_earth", name: "<green><b>Sello de la Tierra</b> 🜃", lore: ["<gray>Uno de los tres sellos de la torre."], glow: true}
+  sello_aire: {material: FEATHER, model: "escape:seal_air", name: "<white><b>Sello del Aire</b> 🜁", lore: ["<gray>Uno de los tres sellos de la torre."], glow: true}
+  girasol: {material: SUNFLOWER, name: "<yellow>Girasol"}
+  amapola: {material: POPPY, name: "<red>Amapola"}
+  aciano: {material: CORNFLOWER, name: "<blue>Aciano"}
+  lirio: {material: LILY_OF_THE_VALLEY, name: "<white>Lirio de los valles"}
+  tulipan: {material: ORANGE_TULIP, name: "<gold>Tulipán naranja"}
+  llave_biblioteca: {material: TRIPWIRE_HOOK, model: "escape:key_iron", name: "<gray><b>Llave de hierro</b>", lore: ["<gray>Grabado: «Biblioteca»"], glow: true}
+  lampara_apagada: {material: LANTERN, name: "<gray>Lámpara apagada", lore: ["<gray>Tiene un hueco para una gema."]}
+  cristal_violeta: {material: AMETHYST_SHARD, model: "escape:violet_crystal", name: "<light_purple>Cristal violeta", lore: ["<gray>La luz que lo atraviesa", "<gray>se vuelve extraña..."]}
+  lampara_uv: {material: SOUL_LANTERN, model: "escape:uv_lamp", name: "<light_purple><b>Lámpara de luz negra</b>", lore: ["<gray>Sostenla para ver escrituras", "<gray>invisibles en las paredes."], tags: [uv], glow: true}
+  lente: {material: GLASS_PANE, model: "escape:lens", name: "<aqua>Lente pulida", lore: ["<gray>Encajaría en un telescopio."]}
+  tenazas: {material: SHEARS, model: "escape:tongs", name: "<gray>Tenazas de herrero", lore: ["<gray>Para coger cosas muy calientes."]}
+  mercurio: {material: IRON_NUGGET, model: "escape:mercury", name: "<white>Mercurio ☿", lore: ["<gray>El espíritu."]}
+  azufre: {material: BLAZE_POWDER, model: "escape:sulfur", name: "<yellow>Azufre 🜍", lore: ["<gray>El alma."]}
+  sal: {material: SUGAR, model: "escape:salt", name: "<white>Sal 🜔", lore: ["<gray>El cuerpo."]}
+  llave_observatorio: {material: TRIPWIRE_HOOK, model: "escape:key_gold", name: "<gold><b>Llave dorada</b>", lore: ["<gray>Grabado: «Observatorio»"], glow: true}
+  urna: {material: DECORATED_POT, name: "<gray>Urna funeraria", lore: ["<gray>Pesa muchísimo."]}
+  nigredo: {material: COAL, model: "escape:stone_black", name: "<dark_gray><b>Nigredo</b>", lore: ["<gray>La piedra negra: la muerte."], glow: true}
+  albedo: {material: QUARTZ, model: "escape:stone_white", name: "<white><b>Albedo</b>", lore: ["<gray>La piedra blanca: la pureza."], glow: true}
+  citrinitas: {material: RAW_GOLD, model: "escape:stone_yellow", name: "<yellow><b>Citrinitas</b>", lore: ["<gray>La piedra amarilla: el amanecer."], glow: true}
+  rubedo: {material: REDSTONE, model: "escape:stone_red", name: "<red><b>Rubedo</b>", lore: ["<gray>La piedra roja: la vida eterna."], glow: true}
+  diario:
+    material: WRITTEN_BOOK
+    name: "<gold>Diario de Aurelio Vance"
+    book:
+      title: "Diario de Aurelio Vance"
+      author: "Aurelio Vance"
+      pages:
+        - "<dark_red><b>Diario de Aurelio Vance</b></dark_red>\n\nSi alguien lee esto, he fracasado. La torre ya no me obedece: a medianoche se vendrá abajo con todos sus secretos.\n\nNo hay salida... salvo terminar lo que yo no pude."
+        - "Mis cuatro discípulos guardan la combinación de mi vitrina.\n\nLeedla <b>del más anciano al más joven</b>, y que cada uno os dé su número."
+        - "La <b>Tria Prima</b> se vierte siempre <b>del espíritu al cuerpo</b>, pasando por el alma.\n\nQuien la vierta en otro orden solo obtendrá humo."
+        - "La Gran Obra tiene cuatro fases, y en este orden nace la Piedra:\n\n<b>negro, blanco, amarillo y rojo.</b>"
+        - "Mi cripta duerme bajo vuestros pies. Mi reloj se detuvo la noche en que morí, y solo marcando esa hora se abrirá su puerta.\n\nLa hora quedó escrita donde solo la luz negra puede verla."
+  poema:
+    material: WRITTEN_BOOK
+    name: "<green>Cuaderno de jardinería"
+    book:
+      title: "Cuaderno de jardinería"
+      author: "Marta"
+      pages:
+        - "<dark_green><b>Para el invernadero</b></dark_green>\n\nEl maestro quiere sus flores en los cuatro huecos del muro norte, del I al IV:"
+        - "<b>I.</b> Primero el oro que sigue al sol.\n<b>II.</b> Luego la sangre de los campos de trigo.\n<b>III.</b> Después el azul del cielo de verano.\n<b>IV.</b> Y al final las campanillas blancas de mayo."
+        - "Las flores andan repartidas por el patio y el cobertizo. ¡Ojo! No todas sirven."
+
+zones:
+  - {id: courtyard, region: "@zone.courtyard", name: "<gold>El Patio", subtitle: "<gray>La torre está sellada"}
+  - {id: greenhouse, region: "@zone.greenhouse", name: "<green>El Invernadero", subtitle: "<gray>Huele a tierra mojada"}
+  - {id: hall, region: "@zone.hall", name: "<gold>El Vestíbulo", subtitle: "<gray>Retratos que te miran", locked-until: p_puerta_torre}
+  - {id: library, region: "@zone.library", name: "<gold>La Biblioteca", subtitle: "<gray>Mil libros, un secreto", locked-until: p_biblioteca}
+  - {id: lab, region: "@zone.lab", name: "<red>El Laboratorio", subtitle: "<gray>Algo burbujea...", locked-until: p_libros}
+  - {id: observatory, region: "@zone.observatory", name: "<aqua>El Observatorio", subtitle: "<gray>Las estrellas guardan la respuesta", locked-until: p_puerta_observatorio}
+  - {id: crypt, region: "@zone.crypt", name: "<dark_gray>La Cripta", subtitle: "<gray>Aquí descansa el maestro", locked-until: p_reloj}
+  - {id: tunnel, region: "@zone.tunnel", name: "<gold>El Túnel", subtitle: "<gray>¡Corred!", locked-until: p_altar}
+
+props:
+  # patio
+  - {id: cofre_cobertizo, type: container, at: "@shed.chest", items: [cuerda, "COAL*3"]}
+  - {id: caja_cobertizo, type: search, at: "@shed.crate", item: gancho, message: "<gray><player> rebusca en la caja y encuentra un <white>gancho oxidado</white>."}
+  - {id: mesa_cobertizo, type: workbench, at: "@shed.bench", recipes: [garfio], title: "<dark_gray>Mesa de trabajo"}
+  - {id: flor_1, type: search, at: "@pot.1", item: girasol}
+  - {id: flor_2, type: search, at: "@pot.2", item: amapola}
+  - {id: flor_3, type: search, at: "@pot.3", item: aciano}
+  - {id: flor_4, type: search, at: "@pot.4", item: lirio}
+  - {id: flor_5, type: search, at: "@pot.5", item: tulipan}
+  - {id: libro_jardin, type: book, at: "@gh.lectern", item: poema}
+  - id: jardinera
+    type: npc
+    at: "@gh.npc"
+    name: "<green>Marta, la jardinera"
+    profession: farmer
+    talk:
+      - "El maestro me hacía colocar sus flores en el muro norte. Siempre en el mismo orden."
+      - "Mi cuaderno está en el atril. Léelo con calma."
+      - "¿Los sellos? Agua, tierra y aire... la torre no se abre sin los tres."
+    after-solved: {puzzle: p_puerta_torre, talk: ["¡Has abierto la torre! Ten cuidado ahí dentro..."]}
+  # vestíbulo
+  - {id: diario, type: book, at: "@hall.diary", item: diario}
+  - {id: esfera_reloj, type: frame, at: "@hall.clockface", item: CLOCK, facing: west}
+  # biblioteca
+  - {id: cajon, type: search, at: "@lib.drawer", item: lampara_apagada, message: "<gray><player> abre el cajón: una <white>lámpara apagada</white> con un hueco vacío."}
+  - {id: escritorio, type: workbench, at: "@lib.desk", recipes: [lampara], title: "<dark_gray>Escritorio del alquimista"}
+  - {id: uv_reloj, type: uv-text, at: "@lib.uv", text: "<light_purple>El maestro murió a las\n<light_purple><b>III : XV</b>\n<light_purple>de la madrugada", scale: 1.1, radius: 7}
+  # laboratorio
+  - {id: horno, type: search, at: "@lab.furnace", item: azufre, requires-item: tenazas, need-message: "<red>¡Quema! Necesitas algo para sacar lo que hay dentro del horno.", message: "<yellow><player> saca el azufre del horno con las tenazas."}
+  - {id: saco, type: search, at: "@lab.sack", item: sal}
+  - {id: uv_1, type: uv-text, at: "@lab.uv.1", text: "<light_purple><b>1 · A</b>", scale: 1.6, radius: 6}
+  - {id: uv_2, type: uv-text, at: "@lab.uv.2", text: "<light_purple><b>2 · Z</b>", scale: 1.6, radius: 6}
+  - {id: uv_3, type: uv-text, at: "@lab.uv.3", text: "<light_purple><b>3 · O</b>", scale: 1.6, radius: 6}
+  - {id: uv_4, type: uv-text, at: "@lab.uv.4", text: "<light_purple><b>4 · T</b>", scale: 1.6, radius: 6}
+  - {id: uv_5, type: uv-text, at: "@lab.uv.5", text: "<light_purple><b>5 · H</b>", scale: 1.6, radius: 6}
+  - {id: vapor, type: particles, at: "@lab.cauldron", particle: WITCH, interval: 10, count: 3, height: 1.1}
+  # cripta
+  - {id: urna_1, type: search, at: "@crypt.urn.1", item: urna}
+  - {id: urna_2, type: search, at: "@crypt.urn.2", item: urna}
+  - {id: urna_3, type: search, at: "@crypt.urn.3", item: urna}
+  - {id: urna_4, type: search, at: "@crypt.urn.4", item: urna}
+  - id: fantasma
+    type: npc
+    at: "@crypt.tomb+0,1,2"
+    name: "<aqua><i>El espíritu de Aurelio</i>"
+    profession: cleric
+    requires: [p_altar]
+    talk:
+      - "Lo habéis logrado... la Piedra existe. Yo ya no la necesito."
+      - "El túnel lleva al mausoleo de mi familia. ¡Corred antes de la medianoche!"
+  - {id: llama_altar, type: particles, at: "@altar.frame.*", particle: SOUL_FIRE_FLAME, interval: 20, count: 1, height: 0.2, requires: [p_altar]}
+
+recipes:
+  - {id: garfio, inputs: [cuerda, gancho], output: garfio, message: "<gold><player> ata la cuerda al gancho: ¡un garfio!"}
+  - {id: lampara, inputs: [lampara_apagada, cristal_violeta], output: lampara_uv, message: "<light_purple><player> encaja el cristal en la lámpara. La luz se vuelve negra..."}
+
+ambience:
+  - {sound: "ambient.cave", zone: "@zone.crypt", interval: 25s, volume: 0.7}
+  - {sound: "block.brewing_stand.brew", at: "@lab.cauldron", interval: 8s, volume: 0.5}
+  - {sound: "entity.phantom.ambient", zone: "@zone.courtyard", interval: 40s, volume: 0.3, pitch: 0.6}
+  - {sound: "block.wood.hit", zone: "@zone.hall", interval: 30s, volume: 0.3, pitch: 0.5}
+
+timeline:
+  - at: 20m
+    actions:
+      - {type: message, text: "<gray><i>La torre cruje. Cae polvo del techo...</i>"}
+      - {type: sound, sound: "block.gravel.break", volume: 1, pitch: 0.5}
+  - remaining: 15m
+    actions:
+      - {type: title, title: "", subtitle: "<red>Los cimientos tiemblan...", stay: 50}
+      - {type: sound, sound: "entity.ravager.roar", volume: 0.6, pitch: 0.5}
+  - remaining: 3m
+    actions:
+      - {type: title, title: "<red><b>¡LA TORRE SE DERRUMBA!</b>", subtitle: "<gray>3 minutos", stay: 50}
+      - {type: effect, effect: nausea, duration: 6s}
+      - {type: sound, sound: "entity.generic.explode", volume: 0.8, pitch: 0.6}
+
+puzzles:
+  # ═════════ PATIO ═════════
+  p_garfio:
+    type: obtain
+    name: "Herramienta improvisada"
+    objective: "Fabrica algo para alcanzar el fondo del pozo"
+    items: [garfio]
+    hints:
+      - "En el cobertizo hay un cofre y unas cajas."
+      - "Necesitas una cuerda y un gancho: combínalos en la mesa de trabajo del cobertizo."
+      - "Cuerda (cofre) + gancho (caja de la derecha) → mesa de trabajo = garfio."
+    xp: 15
+
+  p_pozo:
+    type: interact
+    name: "El pozo"
+    objective: "Pesca lo que hay en el fondo del pozo"
+    requires: [p_garfio]
+    at: "@well.crank"
+    item: garfio
+    wrong-item-message: "<gray>La manivela del pozo... ojalá tuvieras algo con lo que pescar."
+    hints:
+      - "La manivela de madera del pozo es la clave."
+      - "Sostén el garfio y haz clic derecho en la manivela."
+    xp: 20
+    on-solve:
+      - {type: give, item: sello_agua}
+      - {type: message, text: "<aqua><player> saca del fondo del pozo el <b>Sello del Agua</b>."}
+      - {type: sound, sound: "entity.fishing_bobber.splash", at: "@well.crank"}
+
+  p_flores:
+    type: frames
+    name: "El muro de las flores"
+    objective: "Coloca las flores correctas en el muro del invernadero"
+    frames:
+      - {at: "@gh.frame.1", item: girasol}
+      - {at: "@gh.frame.2", item: amapola}
+      - {at: "@gh.frame.3", item: aciano}
+      - {at: "@gh.frame.4", item: lirio}
+    hints:
+      - "El cuaderno del atril del invernadero describe cuatro flores en orden."
+      - "Hay flores escondidas en macetas del patio, en el cobertizo y en el invernadero. Una no sirve."
+      - "I girasol, II amapola, III aciano, IV lirio de los valles. El tulipán es una trampa."
+    xp: 30
+    on-solve:
+      - {type: give, item: sello_tierra}
+      - {type: message, text: "<green>La tierra del muro se abre y aparece el <b>Sello de la Tierra</b>."}
+      - {type: particle, particle: HAPPY_VILLAGER, at: "@gh.frame.*", count: 15}
+
+  p_campanas:
+    type: sequence
+    name: "Las campanas de la fuente"
+    objective: "Haz sonar las campanas de la fuente en el orden correcto"
+    buttons: ["@bell.1", "@bell.2", "@bell.3", "@bell.4"]
+    order: [2, 3, 4, 1]
+    sound: "block.bell.use"
+    hints:
+      - "Hay carteles en la base de la torre que hablan de la veleta."
+      - "El sol nace en el este, se alza en el sur, muere en el oeste y duerme en el norte."
+      - "Toca las campanas: este, sur, oeste y norte (la campana norte es la más cercana a la torre)."
+    xp: 30
+    on-solve:
+      - {type: give, item: sello_aire}
+      - {type: message, text: "<white>El agua de la fuente se calma. Un <b>Sello del Aire</b> cae flotando en tus manos."}
+      - {type: firework, at: "@bell.1+0,6,5", colors: ["#FFFFFF", "#AADDFF"]}
+
+  p_puerta_torre:
+    type: frames
+    name: "La puerta de los tres sellos"
+    objective: "Pon los tres sellos en la puerta de la torre"
+    frames:
+      - {at: "@seal.1", item: sello_agua}
+      - {at: "@seal.2", item: sello_aire}
+      - {at: "@seal.3", item: sello_tierra}
+    hints:
+      - "Cada sello sale de un rincón del patio: el pozo, el invernadero y la fuente."
+      - "Los carteles bajo cada hueco dicen qué sello va en cada uno: agua a la izquierda, tierra a la derecha y el aire arriba."
+    xp: 40
+    on-solve:
+      - {type: open, at: "@tower.door"}
+      - {type: title, title: "<gold>La torre se abre", subtitle: "<gray>Los sellos brillan...", stay: 50}
+      - {type: sound, sound: "block.end_portal.spawn", volume: 0.6, pitch: 1.4}
+
+  # ═════════ VESTÍBULO ═════════
+  p_retratos:
+    type: keypad
+    style: dial
+    name: "La vitrina de los discípulos"
+    objective: "Abre la vitrina del vestíbulo (4 cifras)"
+    requires: [p_puerta_torre]
+    at: "@hall.cabinet"
+    code: "5319"
+    title: "<dark_gray>Vitrina · combinación"
+    hints:
+      - "El diario del atril habla de los cuatro discípulos y su orden."
+      - "Los retratos tienen el año de nacimiento y un número. Ordénalos del más anciano (año menor) al más joven."
+      - "Corvo 1301 (5), Aurelio 1312 (3), Delia 1325 (1), Bianca 1338 (9): 5319."
+    xp: 40
+    on-solve:
+      - {type: give, item: llave_biblioteca}
+      - {type: message, text: "<gray>La vitrina se abre: dentro hay una <white>llave de hierro</white>."}
+
+  p_biblioteca:
+    type: interact
+    name: "La puerta de la biblioteca"
+    objective: "Abre la biblioteca"
+    requires: [p_retratos]
+    at: ["@library.door", "@library.door+0,1,0"]
+    item: llave_biblioteca
+    hints:
+      - "La puerta de hierro del vestíbulo tiene un cartel: «Biblioteca»."
+      - "Sostén la llave de hierro y haz clic derecho en la puerta."
+    xp: 10
+    on-solve:
+      - {type: open, at: "@library.door"}
+
+  p_reloj:
+    type: keypad
+    style: dial
+    name: "El reloj detenido"
+    objective: "Pon el reloj de pie en la hora de la muerte del maestro"
+    requires: [p_puerta_torre]
+    at: "@hall.clock"
+    needs: [lampara_uv]     # la hora solo se lee con luz negra
+    code: "0315"
+    title: "<dark_gray>Reloj · HH MM"
+    hints:
+      - "El diario dice que la hora quedó escrita donde solo la luz negra puede verla."
+      - "Con la lámpara de luz negra, mira la pared del fondo de la biblioteca."
+      - "III : XV son las 3:15 → 0315."
+    xp: 50
+    on-solve:
+      - {type: clear, at: "@hall.hatch", interval: 3}
+      - {type: narrative, interval: 50, lines: ["<gray><i>Las campanadas del reloj resuenan por toda la torre...</i>", "<gray><i>Una trampilla se abre en el suelo del vestíbulo.</i>"]}
+      - {type: sound, sound: "block.bell.resonate", volume: 1, pitch: 0.5}
+
+  # ═════════ BIBLIOTECA ═════════
+  p_esfinge:
+    type: answer
+    name: "La esfinge"
+    objective: "Responde al acertijo de la esfinge"
+    requires: [p_biblioteca]
+    at: "@lib.sphinx"
+    question:
+      - "<gray><i>El busto de piedra abre los ojos:</i>"
+      - "<white>«Tengo ciudades pero no casas, montañas pero no árboles, y agua pero ningún pez. ¿Qué soy?»"
+    answers: ["mapa", "un mapa", "el mapa", "mapamundi", "plano"]
+    hints:
+      - "Piensa en algo que represente el mundo sin ser el mundo."
+      - "Lo usan los exploradores y los piratas."
+      - "Es un mapa."
+    xp: 30
+    on-solve:
+      - {type: give, item: lente}
+      - {type: message, text: "<aqua>La boca de la esfinge se abre y deja caer una <b>lente pulida</b>."}
+
+  p_libros:
+    type: sequence
+    name: "Los libros de colores"
+    objective: "Pulsa los libros de colores en el orden del arcoíris"
+    requires: [p_biblioteca]
+    buttons: ["@lib.book.1", "@lib.book.2", "@lib.book.3", "@lib.book.4", "@lib.book.5", "@lib.book.6"]
+    order: [1, 2, 3, 4, 5, 6]
+    sound: "item.book.page_turn"
+    hints:
+      - "Hay seis lomos de colores entre las estanterías de la pared oeste."
+      - "El cartel habla del arco de colores tras la tormenta, de fuera hacia dentro."
+      - "Rojo, naranja, amarillo, verde, azul y morado."
+    xp: 40
+    on-solve:
+      - {type: clear, at: "@library.secret"}
+      - {type: title, title: "", subtitle: "<gray>Una estantería se desliza...", stay: 40}
+      - {type: sound, sound: "block.piston.contract", volume: 1, pitch: 0.6}
+
+  p_caja_china:
+    type: slide
+    name: "La caja mecánica"
+    objective: "Resuelve la caja mecánica del escritorio"
+    requires: [p_biblioteca]
+    at: "@lib.box"
+    title: "<dark_gray>Caja mecánica"
+    moves: 30
+    seed: 11
+    hints:
+      - "Ordena las piezas del 1 al 8 de izquierda a derecha y de arriba abajo, con el hueco al final."
+      - "Coloca primero la fila de arriba (1 2 3) y no la toques más."
+    xp: 30
+    on-solve:
+      - {type: give, item: cristal_violeta}
+      - {type: message, text: "<light_purple>Clic. La caja se abre: dentro brilla un <b>cristal violeta</b>."}
+
+  p_lampara:
+    type: obtain
+    name: "Luz negra"
+    objective: "Fabrica una lámpara capaz de revelar lo invisible"
+    requires: [p_caja_china]
+    items: [lampara_uv]
+    hints:
+      - "En un cajón del escritorio hay una lámpara a la que le falta algo."
+      - "Combina la lámpara apagada con el cristal violeta en el escritorio (mesa de cartografía)."
+    xp: 15
+
+  # ═════════ LABORATORIO ═════════
+  p_tarot:
+    type: memory
+    name: "Las cartas del tarot"
+    objective: "Empareja las cartas de la mesa de tarot"
+    requires: [p_libros]
+    at: "@lab.tarot"
+    pairs: 6
+    title: "<dark_gray>Tarot"
+    hints:
+      - "Es un juego de parejas: recuerda dónde está cada símbolo."
+      - "Si te lías, sal y vuelve a entrar: se baraja de nuevo."
+    xp: 25
+    on-solve:
+      - {type: give, item: tenazas}
+      - {type: message, text: "<gray>Bajo el tapete aparecen unas <white>tenazas de herrero</white>."}
+
+  p_alambique:
+    type: lightsout
+    name: "Las válvulas del alambique"
+    objective: "Abre todas las válvulas del alambique (todas encendidas)"
+    requires: [p_libros]
+    grid: "@lab.valves"
+    reset: "@lab.valves.reset"
+    scramble: [2, 5, 7]
+    hints:
+      - "Cada válvula cambia ella misma y las que la tocan arriba, abajo y a los lados."
+      - "Si te lías, el botón de piedra vuelve al principio."
+      - "Desde el principio: pulsa la de arriba en el centro, la del centro y la de abajo a la izquierda."
+    xp: 40
+    on-solve:
+      - {type: give, item: mercurio}
+      - {type: message, text: "<white>El alambique gotea una perla plateada: <b>mercurio</b>."}
+
+  p_tria_prima:
+    type: deliver
+    name: "La Tria Prima"
+    objective: "Vierte los tres principios en el caldero en orden"
+    requires: [p_libros]
+    at: "@lab.cauldron"
+    items: [mercurio, azufre, sal]
+    ordered: true
+    hints:
+      - "El diario explica el orden; el cartel de la pared dice qué es cada sustancia."
+      - "Espíritu, alma, cuerpo."
+      - "Mercurio, azufre y sal."
+    xp: 50
+    on-solve:
+      - {type: give, item: rubedo}
+      - {type: message, text: "<red>El caldero se tiñe de rojo sangre y deja una piedra: <b>Rubedo</b>."}
+      - {type: particle, particle: FLAME, at: "@lab.cauldron+0,1,0", count: 40}
+
+  p_formula:
+    type: keypad
+    style: letters
+    name: "La caja fuerte"
+    objective: "Abre la caja fuerte del laboratorio (5 letras)"
+    requires: [p_libros]
+    at: "@lab.safe"
+    needs: [lampara_uv]
+    code: "AZOTH"
+    title: "<dark_gray>Caja fuerte"
+    hints:
+      - "Las paredes del laboratorio esconden letras que solo se ven con luz negra."
+      - "Cada letra tiene un número delante: ordénalas."
+      - "A Z O T H: AZOTH, el disolvente universal."
+    xp: 50
+    on-solve:
+      - {type: give, item: llave_observatorio}
+      - {type: message, text: "<gold>La caja fuerte se abre: una <b>llave dorada</b>."}
+
+  p_puerta_observatorio:
+    type: interact
+    name: "Las rejas del observatorio"
+    objective: "Abre las rejas de la escalera del observatorio"
+    requires: [p_formula]
+    at: "@lab.obsbars"
+    item: llave_observatorio
+    hints:
+      - "La escalera del rincón noroeste del laboratorio está tras unas rejas."
+      - "Sostén la llave dorada y haz clic derecho en las rejas."
+    xp: 10
+    on-solve:
+      - {type: clear, at: "@lab.obsbars"}
+
+  # ═════════ OBSERVATORIO ═════════
+  p_constelacion:
+    type: levers
+    name: "La Corona del Alquimista"
+    objective: "Reproduce la constelación con las palancas"
+    requires: [p_puerta_observatorio]
+    levers: "@obs.lever.*"
+    lamps: "@obs.lamp.*"
+    lamp-per-lever: false
+    pattern: "101101"
+    hints:
+      - "La carta celeste de la pared norte tiene estrellas encendidas y apagadas."
+      - "Cada palanca corresponde a una posición de la carta, de izquierda a derecha. Las bombillas cuentan cuántas tienes bien."
+      - "Activa la 1ª, 3ª, 4ª y 6ª palanca; deja la 2ª y la 5ª sin activar."
+    xp: 40
+    on-solve:
+      - {type: give, item: albedo}
+      - {type: message, text: "<white>La carta celeste se ilumina y de ella cae una piedra blanca: <b>Albedo</b>."}
+
+  p_esferas:
+    type: melody
+    name: "La música de las esferas"
+    objective: "Toca en los cristales la melodía de la caja de música"
+    requires: [p_puerta_observatorio]
+    keys: "@obs.crystal.*"
+    notes: [6, 8, 10, 11, 13, 15, 17]
+    melody: [1, 3, 5, 3, 1, 5, 6, 5]
+    listen: "@obs.musicbox"
+    sound: "block.note_block.chime"
+    hints:
+      - "Haz clic en la caja de música para escuchar la melodía."
+      - "Los cristales van de grave (izquierda) a agudo (derecha): do, re, mi, fa, sol, la, si."
+      - "Cristales 1, 3, 5, 3, 1, 5, 6, 5 (do mi sol mi do sol la sol)."
+    xp: 40
+    on-solve:
+      - {type: clear, at: "@obs.cap"}
+      - {type: message, text: "<aqua>La tapa del telescopio se abre con un chasquido."}
+
+  p_telescopio:
+    type: interact
+    name: "El telescopio"
+    objective: "Pon la lente en el telescopio"
+    requires: [p_esferas]
+    at: "@obs.eyepiece"
+    item: lente
+    hints:
+      - "Al telescopio le falta una lente. ¿Quién te dio una?"
+      - "Sostén la lente pulida (de la esfinge) y haz clic derecho en el ocular de cobre."
+    xp: 30
+    on-solve:
+      - {type: give, item: citrinitas}
+      - {type: narrative, interval: 60, lines: ["<yellow><i>Por el telescopio entra la luz de la luna, amarilla como el oro...</i>", "<yellow><i>El rayo derrite el lacre de un cajón: dentro está <b>Citrinitas</b>.</i>"]}
+
+  # ═════════ CRIPTA ═════════
+  p_ataudes:
+    type: plates
+    name: "Los cuatro discípulos"
+    objective: "Mantén pulsadas las cuatro placas de los sarcófagos"
+    requires: [p_reloj]
+    plates: "@crypt.plate.*"
+    weight-item: urna
+    weight-block: DEEPSLATE_TILES
+    hold: 3s
+    hints:
+      - "Hay una placa delante de cada sarcófago: deben estar pulsadas a la vez."
+      - "Si no sois cuatro, en las esquinas de la cripta hay urnas muy pesadas."
+      - "Coge las cuatro urnas y haz clic derecho con ellas en las placas que no tengan a nadie encima."
+    xp: 40
+    on-solve:
+      - {type: give, item: nigredo}
+      - {type: message, text: "<dark_gray>La tumba del maestro se abre con un gemido. Dentro: una piedra negra, <b>Nigredo</b>."}
+      - {type: sound, sound: "block.stone.break", volume: 1, pitch: 0.5}
+
+  p_altar:
+    type: frames
+    name: "La Gran Obra"
+    objective: "Coloca las cuatro piedras en el altar en el orden de la Gran Obra"
+    requires: [p_reloj]
+    frames:
+      - {at: "@altar.frame.1", item: nigredo}
+      - {at: "@altar.frame.2", item: albedo}
+      - {at: "@altar.frame.3", item: citrinitas}
+      - {at: "@altar.frame.4", item: rubedo}
+    hints:
+      - "Necesitas cuatro piedras: negra (cripta), blanca (observatorio), amarilla (telescopio) y roja (caldero)."
+      - "El diario dice el orden de las fases: negro, blanco, amarillo y rojo."
+      - "De izquierda a derecha: Nigredo, Albedo, Citrinitas, Rubedo."
+    xp: 80
+    on-solve:
+      - {type: clear, at: "@crypt.exitwall", interval: 4}
+      - {type: title, title: "<gold><b>¡LA PIEDRA FILOSOFAL!</b>", subtitle: "<gray>Un muro de la cripta se derrumba...", stay: 60}
+      - {type: sound, sound: "ui.toast.challenge_complete", volume: 1, pitch: 0.8}
+      - {type: lightning, at: "@crypt.tomb"}
+
+  p_huida:
+    type: reach
+    name: "La huida"
+    objective: "Escapa por el túnel antes de que la torre se derrumbe"
+    requires: [p_altar]
+    region: "@exit"
+    hints:
+      - "El muro sur de la cripta se ha abierto: sigue el túnel."
+      - "Al final del túnel hay una escalera de mano que sube al mausoleo."
+    xp: 20

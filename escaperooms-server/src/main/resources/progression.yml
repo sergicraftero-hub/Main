@@ -1,0 +1,93 @@
+# Niveles, rangos, recompensa diaria, misiones y logros.
+
+levels:
+  max-level: 100
+  base-xp: 400          # XP para pasar de nivel n a n+1 = base-xp * n^exponent
+  exponent: 1.35
+  keys-per-level: 25
+  rewards:              # premios extra en niveles concretos
+    5: {keys: 150, message: "<gold>¡Nivel 5! Se desbloquean las salas de dificultad media."}
+    10: {keys: 300, gems: 10}
+    20: {keys: 500, gems: 20}
+    30: {keys: 750, gems: 30}
+    50: {keys: 1500, gems: 75, message: "<gold>¡Nivel 50! Eres una leyenda de las salas de escape."}
+    75: {keys: 2500, gems: 100}
+    100: {keys: 5000, gems: 250}
+
+ranks:
+  - {min-level: 1, name: "<gray>Novato", prefix: "<gray>[Novato]"}
+  - {min-level: 5, name: "<green>Aprendiz", prefix: "<green>[Aprendiz]"}
+  - {min-level: 10, name: "<dark_green>Investigador", prefix: "<dark_green>[Investigador]"}
+  - {min-level: 20, name: "<aqua>Detective", prefix: "<aqua>[Detective]"}
+  - {min-level: 30, name: "<blue>Inspector", prefix: "<blue>[Inspector]"}
+  - {min-level: 45, name: "<light_purple>Maestro del Escape", prefix: "<light_purple>[Maestro]"}
+  - {min-level: 60, name: "<gold>Gran Maestro", prefix: "<gold>[Gran Maestro]"}
+  - {min-level: 80, name: "<red>Leyenda", prefix: "<red>[Leyenda]"}
+  - {min-level: 100, name: "<gradient:#FFD700:#FF4500>Inmortal</gradient>", prefix: "<gradient:#FFD700:#FF4500>[Inmortal]</gradient>"}
+
+# Multiplicadores de XP por permiso (los rangos VIP de Tebex/LuckPerms dan estos permisos)
+multipliers:
+  escaperooms-vip: 1.25
+  escaperooms-vipplus: 1.5
+  escaperooms-leyenda: 2.0
+
+rewards:
+  fail-xp-fraction: 0.25   # al perder: esta parte de la XP de la sala, proporcional a los puzles resueltos
+
+daily:
+  vip-bonus:
+    permission: escaperooms.vip
+    multiplier: 2
+  rewards:                 # se repite en ciclos de 7 días; si fallas un día la racha vuelve al día 1
+    - {keys: 50, xp: 50}
+    - {keys: 75, xp: 75}
+    - {keys: 100, xp: 100}
+    - {keys: 125, xp: 125}
+    - {keys: 150, xp: 150}
+    - {keys: 200, xp: 200}
+    - {keys: 300, gems: 5, xp: 400}
+
+quests:
+  daily-count: 3
+  weekly-count: 3
+  # tipos: play_rooms, win_rooms, solve_puzzles, earn_stars, win_no_hints, play_with_party, win_wing (con wing:)
+  daily:
+    play_1: {type: play_rooms, amount: 1, name: "<yellow>Calentando motores", description: "<gray>Juega 1 sala.", reward: {xp: 100, keys: 40}}
+    win_1: {type: win_rooms, amount: 1, name: "<yellow>¡Libres!", description: "<gray>Escapa de 1 sala.", reward: {xp: 200, keys: 60}}
+    puzzles_10: {type: solve_puzzles, amount: 10, name: "<yellow>Mente ágil", description: "<gray>Resuelve 10 puzles.", reward: {xp: 150, keys: 50}}
+    stars_3: {type: earn_stars, amount: 3, name: "<yellow>Coleccionista", description: "<gray>Consigue 3 estrellas en total.", reward: {xp: 200, keys: 70}}
+    party_1: {type: play_with_party, amount: 1, name: "<yellow>En equipo", description: "<gray>Escapa de una sala con al menos otro jugador.", reward: {xp: 200, keys: 80}}
+    nohint_1: {type: win_no_hints, amount: 1, name: "<yellow>Sin ayuda", description: "<gray>Escapa de una sala sin pedir pistas.", reward: {xp: 300, keys: 100}}
+  weekly:
+    win_5: {type: win_rooms, amount: 5, name: "<gold>Escapista", description: "<gray>Escapa de 5 salas esta semana.", reward: {xp: 1000, keys: 300}}
+    puzzles_80: {type: solve_puzzles, amount: 80, name: "<gold>Cerebrito", description: "<gray>Resuelve 80 puzles.", reward: {xp: 800, keys: 250}}
+    stars_15: {type: earn_stars, amount: 15, name: "<gold>Lluvia de estrellas", description: "<gray>Consigue 15 estrellas.", reward: {xp: 1200, keys: 350}}
+    party_5: {type: play_with_party, amount: 5, name: "<gold>Amigos para siempre", description: "<gray>Escapa 5 veces en grupo.", reward: {xp: 1000, keys: 300, gems: 5}}
+    cine_2: {type: win_wing, wing: cine, amount: 2, name: "<gold>Cinéfilo", description: "<gray>Escapa de 2 salas de Cine.", reward: {xp: 900, keys: 250}}
+    originales_2: {type: win_wing, wing: originales, amount: 2, name: "<gold>Original", description: "<gray>Escapa de 2 salas Originales.", reward: {xp: 900, keys: 250}}
+
+# Logros. stat: wins, plays, fails, puzzles, three_stars, no_hint_wins, party_games, hints_used, quests, parkours,
+#   level, stars, rooms_completed, daily_streak, playtime_hours, wing_<ala>_wins
+achievements:
+  first_escape: {name: "Primera huida", description: "Escapa de tu primera sala.", stat: wins, amount: 1, icon: OAK_DOOR, reward: {keys: 100}}
+  escapes_10: {name: "Escapista", description: "Escapa de 10 salas.", stat: wins, amount: 10, icon: IRON_DOOR, reward: {keys: 300}}
+  escapes_50: {name: "Houdini", description: "Escapa de 50 salas.", stat: wins, amount: 50, icon: CHAIN, reward: {keys: 1000, gems: 25}, broadcast: true}
+  escapes_200: {name: "Inescapable", description: "Escapa de 200 salas.", stat: wins, amount: 200, icon: END_PORTAL_FRAME, reward: {gems: 100, cosmetic: "titles:houdini"}, broadcast: true}
+  puzzles_100: {name: "Rompecabezas", description: "Resuelve 100 puzles.", stat: puzzles, amount: 100, icon: PAPER, reward: {keys: 250}}
+  puzzles_1000: {name: "Mente maestra", description: "Resuelve 1000 puzles.", stat: puzzles, amount: 1000, icon: ENCHANTED_BOOK, reward: {gems: 50, cosmetic: "titles:mente"}}
+  three_stars_1: {name: "Perfección", description: "Consigue 3 estrellas en una sala.", stat: three_stars, amount: 1, icon: NETHER_STAR, reward: {keys: 200}}
+  three_stars_10: {name: "Constelación", description: "Consigue 3 estrellas 10 veces.", stat: three_stars, amount: 10, icon: BEACON, reward: {gems: 30, cosmetic: "trails:stars"}}
+  no_hints_1: {name: "Sin chuletas", description: "Escapa sin pedir pistas.", stat: no_hint_wins, amount: 1, icon: BOOK, reward: {keys: 200}}
+  no_hints_10: {name: "Genio", description: "Escapa 10 veces sin pistas.", stat: no_hint_wins, amount: 10, icon: KNOWLEDGE_BOOK, reward: {gems: 25, cosmetic: "titles:genio"}}
+  party_10: {name: "Trabajo en equipo", description: "Escapa 10 veces en grupo.", stat: party_games, amount: 10, icon: LEAD, reward: {keys: 400}}
+  level_10: {name: "Nivel 10", description: "Llega al nivel 10.", stat: level, amount: 10, icon: EXPERIENCE_BOTTLE, reward: {keys: 200}}
+  level_50: {name: "Nivel 50", description: "Llega al nivel 50.", stat: level, amount: 50, icon: EXPERIENCE_BOTTLE, reward: {gems: 50}, broadcast: true}
+  streak_7: {name: "Fiel", description: "Reclama la recompensa diaria 7 días seguidos.", stat: daily_streak, amount: 7, icon: CLOCK, reward: {gems: 10}}
+  streak_30: {name: "Inquebrantable", description: "30 días seguidos de recompensa diaria.", stat: daily_streak, amount: 30, icon: CLOCK, reward: {gems: 50, cosmetic: "victory:aurora"}}
+  stars_30: {name: "Astrónomo", description: "Reúne 30 estrellas.", stat: stars, amount: 30, icon: GLOWSTONE_DUST, reward: {keys: 800}}
+  cine_5: {name: "Cinéfilo", description: "Escapa 5 veces de salas de Cine.", stat: wing_cine_wins, amount: 5, icon: RED_CANDLE, reward: {keys: 300}}
+  anime_5: {name: "Otaku", description: "Escapa 5 veces de salas de Anime.", stat: wing_anime_wins, amount: 5, icon: CHERRY_SAPLING, reward: {keys: 300}}
+  games_5: {name: "Gamer", description: "Escapa 5 veces de salas de Videojuegos.", stat: wing_videojuegos_wins, amount: 5, icon: TARGET, reward: {keys: 300}}
+  parkour_1: {name: "Saltarín", description: "Completa el parkour del lobby.", stat: parkours, amount: 1, icon: FEATHER, reward: {keys: 100}}
+  quests_25: {name: "Cumplidor", description: "Completa 25 misiones.", stat: quests, amount: 25, icon: WRITABLE_BOOK, reward: {gems: 15}}
+  playtime_24: {name: "Veterano", description: "Juega 24 horas en el servidor.", stat: playtime_hours, amount: 24, icon: CLOCK, reward: {gems: 20}}

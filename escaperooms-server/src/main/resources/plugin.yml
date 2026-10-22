@@ -1,0 +1,82 @@
+name: EscapeRooms
+version: '${version}'
+main: com.sergicraftero.escapes.EscapePlugin
+api-version: '1.21'
+description: Servidor de escape rooms completo (lobby, salas temáticas, progresión y tienda)
+author: sergicraftero
+load: POSTWORLD
+softdepend: [floodgate, Geyser-Spigot, LuckPerms, Tebex, BuycraftX]
+
+commands:
+  menu:
+    description: Abre el menú principal
+    aliases: [m, escape]
+  salas:
+    description: Lista de salas por temática
+    aliases: [rooms]
+  jugar:
+    description: Abre una sala para jugar
+    usage: /jugar <sala>
+    aliases: [play]
+  perfil:
+    description: Tu perfil, nivel y logros
+    aliases: [profile, nivel]
+  tienda:
+    description: Tienda de salas y cosméticos
+    aliases: [shop, store]
+  diario:
+    description: Recompensa diaria
+    aliases: [daily, recompensa]
+  misiones:
+    description: Misiones diarias y semanales
+    aliases: [quests]
+  cosmeticos:
+    description: Títulos, estelas, sombreros y efectos de victoria
+    aliases: [cosmetics]
+  top:
+    description: Rankings de las salas
+    aliases: [ranking, leaderboard]
+  pista:
+    description: Pide una pista durante la partida
+    aliases: [hint]
+  salir:
+    description: Sal de la partida o de la cola
+    aliases: [leave]
+  lobby:
+    description: Vuelve al lobby
+    aliases: [hub, spawn]
+  grupo:
+    description: Gestiona tu grupo de amigos
+    usage: /grupo [invitar|aceptar|salir|expulsar|lista] [jugador]
+    aliases: [party, g]
+  eradmin:
+    description: Administración de EscapeRooms
+    permission: escaperooms.admin
+    aliases: [era]
+
+permissions:
+  escaperooms.admin:
+    description: Todos los comandos de administración
+    default: op
+    children:
+      escaperooms.build: true
+      escaperooms.bypass.commands: true
+      escaperooms.bypass.access: true
+  escaperooms.build:
+    description: Editar mapas en creativo (lobby y salas)
+    default: op
+  escaperooms.bypass.commands:
+    description: Usar cualquier comando durante una partida
+    default: op
+  escaperooms.bypass.access:
+    description: Jugar cualquier sala sin requisitos ni compra
+    default: op
+  escaperooms.fly:
+    description: Volar en el lobby
+    default: op
+  escaperooms.vip:
+    description: Ventajas VIP (más llaves diarias, multiplicador de XP)
+    default: false
+  escaperooms.rooms.all:
+    description: Acceso a todas las salas de pago
+    default: false

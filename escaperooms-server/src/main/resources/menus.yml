@@ -1,0 +1,117 @@
+# Menús e inventario del lobby. Acciones: menu:<id>, wing:<ala>, room:<sala>, command:<comando>, url:<enlace>, close
+# Menús disponibles: main, wings, profile, achievements, daily, quests, shop, cosmetics, party, top, settings
+
+hotbar:
+  menu:
+    slot: 0
+    action: "menu:main"
+    item: {material: COMPASS, model: "escape:menu_compass", name: "<gold><b>Menú</b> <gray>(clic derecho)"}
+  rooms:
+    slot: 1
+    action: "menu:wings"
+    item: {material: FILLED_MAP, model: "escape:menu_rooms", name: "<yellow><b>Salas</b> <gray>(clic derecho)"}
+  profile:
+    slot: 4
+    action: "menu:profile"
+    item: {material: PLAYER_HEAD, name: "<aqua><b>Perfil</b> <gray>(clic derecho)"}
+  daily:
+    slot: 6
+    action: "menu:daily"
+    item: {material: CHEST_MINECART, model: "escape:menu_daily", name: "<green><b>Recompensa diaria</b> <gray>(clic derecho)"}
+  shop:
+    slot: 7
+    action: "menu:shop"
+    item: {material: EMERALD, model: "escape:menu_shop", name: "<light_purple><b>Tienda</b> <gray>(clic derecho)"}
+  party:
+    slot: 8
+    action: "menu:party"
+    item: {material: LEAD, model: "escape:menu_party", name: "<white><b>Grupo</b> <gray>(clic derecho)"}
+
+notebook:
+  material: WRITABLE_BOOK
+  model: "escape:notebook"
+  name: "<gold><b>Cuaderno del investigador</b> <gray>(clic derecho)"
+  lore: ["<gray>Objetivos, pistas y salir de la sala."]
+
+main:
+  title: "<dark_gray>Menú principal"
+  rows: 5
+  items:
+    rooms:
+      slot: 13
+      action: "menu:wings"
+      item:
+        material: FILLED_MAP
+        model: "escape:menu_rooms"
+        name: "<gold><b>JUGAR</b>"
+        lore: ["<gray>Elige una sala por temática:", "<gray>cine, anime, videojuegos y originales.", "", "<yellow>▶ Clic para ver las salas"]
+    profile:
+      slot: 20
+      action: "menu:profile"
+      item:
+        material: PLAYER_HEAD
+        name: "<aqua><b>Perfil</b>"
+        lore: ["<gray>Nivel <white><level> <gray>(<rank><gray>)", "<gray>Estrellas: <gold><stars> ★", "", "<yellow>▶ Estadísticas y logros"]
+    daily:
+      slot: 21
+      action: "menu:daily"
+      item:
+        material: CHEST_MINECART
+        model: "escape:menu_daily"
+        name: "<green><b>Recompensa diaria</b>"
+        lore: ["<daily>", "", "<yellow>▶ Clic para abrir"]
+    quests:
+      slot: 22
+      action: "menu:quests"
+      item:
+        material: WRITABLE_BOOK
+        name: "<yellow><b>Misiones</b>"
+        lore: ["<gray>Misiones diarias y semanales", "<gray>con llaves y XP de premio.", "", "<yellow>▶ Clic para abrir"]
+    shop:
+      slot: 23
+      action: "menu:shop"
+      item:
+        material: EMERALD
+        model: "escape:menu_shop"
+        name: "<light_purple><b>Tienda</b>"
+        lore: ["<gold>🗝 <keys> <gray>· <light_purple>💎 <gems>", "", "<yellow>▶ Salas premium y cosméticos"]
+    cosmetics:
+      slot: 24
+      action: "menu:cosmetics"
+      item:
+        material: ARMOR_STAND
+        name: "<red><b>Cosméticos</b>"
+        lore: ["<gray>Títulos, estelas, sombreros", "<gray>y efectos de victoria.", "", "<yellow>▶ Clic para abrir"]
+    party:
+      slot: 30
+      action: "menu:party"
+      item:
+        material: LEAD
+        name: "<white><b>Grupo</b>"
+        lore: ["<gray>Juega con tus amigos (hasta 10).", "<gray>/grupo invitar <nombre>"]
+    top:
+      slot: 32
+      action: "menu:top"
+      item:
+        material: GOLD_INGOT
+        name: "<gold><b>Rankings</b>"
+        lore: ["<gray>Los equipos más rápidos", "<gray>y los niveles más altos."]
+    store:
+      slot: 40
+      action: "url:https://tienda.tuservidor.com"
+      item:
+        material: DIAMOND
+        name: "<aqua><b>Tienda web</b>"
+        lore: ["<gray>Rangos VIP y gemas.", "<gray>¡Apoya al servidor!"]
+
+shop:
+  ranks:
+    lore:
+      - "<green><b>VIP</b> <gray>· x1.25 XP · doble recompensa diaria"
+      - "<aqua><b>VIP+</b> <gray>· x1.5 XP · todas las salas de pago"
+      - "<gold><b>LEYENDA</b> <gray>· x2 XP · cosméticos exclusivos"
+      - ""
+      - "<gray>Nada que ayude a resolver salas:"
+      - "<gray>solo comodidad y estilo."
+      - ""
+      - "<yellow>▶ Abrir la tienda web"

@@ -1,0 +1,54 @@
+# Cosméticos (solo estética, nunca ayudan en las salas).
+# Cada uno: name, icon (material), description, price-keys / price-gems (0 = no se vende), unlock (texto de cómo se consigue)
+# Se pueden dar con permisos: escaperooms.cosmetic.<tipo>.<id>  (o .* para todos los de un tipo)
+
+titles:
+  curioso: {name: "<gray>Curioso", icon: NAME_TAG, display: "<gray>[Curioso]", price-keys: 300}
+  detective: {name: "<aqua>Detective", icon: NAME_TAG, display: "<aqua>[Detective]", price-keys: 1500}
+  alquimista: {name: "<gold>Alquimista", icon: BREWING_STAND, display: "<gold>[Alquimista]", price-keys: 2500}
+  cerrajero: {name: "<yellow>Cerrajero", icon: TRIPWIRE_HOOK, display: "<yellow>[Cerrajero]", price-gems: 30}
+  fantasma: {name: "<white>Fantasma", icon: PHANTOM_MEMBRANE, display: "<white>[👻 Fantasma]", price-gems: 50}
+  houdini: {name: "<gradient:#FFD700:#FF8C00>Houdini</gradient>", icon: CHAIN, display: "<gradient:#FFD700:#FF8C00>[Houdini]</gradient>", unlock: "Logro: Inescapable"}
+  mente: {name: "<light_purple>Mente maestra", icon: ENCHANTED_BOOK, display: "<light_purple>[Mente maestra]", unlock: "Logro: Mente maestra"}
+  genio: {name: "<aqua>Genio", icon: KNOWLEDGE_BOOK, display: "<aqua>[Genio]", unlock: "Logro: Genio"}
+
+trails:
+  flames: {name: "<gold>Llamas", icon: BLAZE_POWDER, particle: FLAME, count: 2, spread: 0.1, speed: 0.01, price-keys: 1200}
+  hearts: {name: "<red>Corazones", icon: RED_DYE, particle: HEART, count: 1, spread: 0.2, price-keys: 1500}
+  notes: {name: "<green>Notas musicales", icon: NOTE_BLOCK, particle: NOTE, count: 1, spread: 0.3, price-keys: 1500}
+  magic: {name: "<light_purple>Magia", icon: AMETHYST_SHARD, particle: WITCH, count: 4, spread: 0.2, price-gems: 40}
+  soul: {name: "<dark_aqua>Almas", icon: SOUL_LANTERN, particle: SOUL_FIRE_FLAME, count: 2, spread: 0.1, speed: 0.01, price-gems: 60}
+  stars: {name: "<yellow>Estrellas", icon: NETHER_STAR, particle: END_ROD, count: 2, spread: 0.2, speed: 0.01, unlock: "Logro: Constelación"}
+  gold_dust: {name: "<gold>Polvo dorado", icon: GOLD_NUGGET, particle: DUST, color: "#FFD700", size: 1.2, count: 4, spread: 0.25, price-gems: 80}
+
+hats:
+  top_hat:
+    name: "<dark_gray>Chistera"
+    icon: BLACK_WOOL
+    price-keys: 2000
+    item: {material: BLACK_CARPET, model: "escape:hat_top", name: "<dark_gray>Chistera"}
+  detective_cap:
+    name: "<gold>Gorra de detective"
+    icon: BROWN_WOOL
+    price-gems: 45
+    item: {material: BROWN_CARPET, model: "escape:hat_detective", name: "<gold>Gorra de detective"}
+  pumpkin:
+    name: "<gold>Calabaza"
+    icon: CARVED_PUMPKIN
+    price-keys: 800
+    item: {material: CARVED_PUMPKIN, name: "<gold>Calabaza"}
+  crown:
+    name: "<yellow>Corona"
+    icon: GOLD_BLOCK
+    price-gems: 150
+    item: {material: GOLDEN_HELMET, model: "escape:hat_crown", name: "<yellow>Corona"}
+
+victory:
+  confetti: {name: "<yellow>Confeti", icon: FIREWORK_ROCKET, colors: ["#FF4444", "#44FF44", "#4488FF", "#FFFF44"], shape: BURST, count: 4, price-keys: 1000}
+  gold_rain: {name: "<gold>Lluvia de oro", icon: GOLD_INGOT, colors: ["#FFD700", "#FFA500"], shape: BALL_LARGE, count: 5, particle: DUST, color: "#FFD700", price-gems: 60}
+  creeper: {name: "<green>Creeper", icon: CREEPER_HEAD, colors: ["#22CC22"], shape: CREEPER, count: 3, price-keys: 2500}
+  stars: {name: "<white>Estrellas", icon: NETHER_STAR, colors: ["#FFFFFF", "#AADDFF"], shape: STAR, count: 4, price-gems: 40}
+  aurora: {name: "<aqua>Aurora", icon: PRISMARINE_CRYSTALS, colors: ["#00FFCC", "#7700FF", "#00AAFF"], shape: BALL_LARGE, count: 6, flicker: true, unlock: "Logro: Inquebrantable"}
+
+# Efecto de victoria para quien no tiene ninguno equipado
+default-victory: {colors: ["#FFAA00", "#FFFF55"], shape: BALL, count: 2}

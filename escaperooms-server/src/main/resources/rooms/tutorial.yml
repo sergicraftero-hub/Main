@@ -1,0 +1,176 @@
+# ─────────────────────────────────────────────────────────────
+#  Tutorial: La Academia de Escapistas
+#  Cinco salas, una mecánica en cada una. ~10 minutos.
+# ─────────────────────────────────────────────────────────────
+name: "<aqua><b>Tutorial</b>: La Academia de Escapistas"
+wing: originales
+difficulty: tutorial
+order: 0
+template: tutorial
+description:
+  - "<gray>Aprende a jugar en 10 minutos:"
+  - "<gray>llaves, códigos, palancas, luz"
+  - "<gray>ultravioleta y trabajo en equipo."
+icon: {material: BOOK, model: "escape:room_tutorial"}
+players: {min: 1, max: 10, recommended: 2}
+time-limit: 20
+estimated-minutes: 10
+access: {level: 1}
+atmosphere: {time: 6000}
+spawn: "@spawn"
+void-y: -5
+stars:
+  two: {time: 12, hints: 3}
+  three: {time: 8, hints: 0}
+hints: {max: 20, penalty: 10s}
+rewards:
+  xp: 150
+  keys: 30
+  xp-per-star: 30
+  first-time: {xp: 300, keys: 100}
+
+intro:
+  interval: 70
+  lines:
+    - "<gold>Bienvenido a la Academia de Escapistas."
+    - "<gray>Aquí aprenderás todo lo que necesitas."
+    - "<yellow>El cuaderno (último hueco) tiene objetivos y pistas."
+
+items:
+  llave_tutorial:
+    material: TRIPWIRE_HOOK
+    model: "escape:key_brass"
+    name: "<gold>Llave de la academia"
+    lore: ["<gray>Sostenla y haz clic derecho", "<gray>en la puerta de hierro."]
+    glow: true
+  linterna_uv:
+    material: SOUL_LANTERN
+    model: "escape:uv_lamp"
+    name: "<light_purple>Linterna ultravioleta"
+    lore: ["<gray>Sostenla en la mano para ver", "<gray>escrituras invisibles cercanas."]
+    tags: [uv]
+  pesa:
+    material: IRON_INGOT
+    model: "escape:weight"
+    name: "<white>Pesa de hierro"
+    lore: ["<gray>Clic derecho en una placa", "<gray>para dejarla encima."]
+
+zones:
+  - {id: room1, region: "@zone.room1", name: "<gold>Paso 1", subtitle: "<gray>Llaves y cofres"}
+  - {id: room2, region: "@zone.room2", name: "<gold>Paso 2", subtitle: "<gray>Códigos", locked-until: t_llave}
+  - {id: room3, region: "@zone.room3", name: "<gold>Paso 3", subtitle: "<gray>Palancas", locked-until: t_codigo}
+  - {id: room4, region: "@zone.room4", name: "<gold>Paso 4", subtitle: "<gray>Luz invisible y acertijos", locked-until: t_palancas}
+  - {id: room5, region: "@zone.room5", name: "<gold>Paso 5", subtitle: "<gray>Trabajo en equipo", locked-until: t_acertijo}
+
+props:
+  - {id: cofre1, type: container, at: "@r1.chest", items: [llave_tutorial]}
+  - {id: barril_uv, type: search, at: "@r4.barrel", item: linterna_uv, message: "<light_purple><player> encuentra una linterna ultravioleta. ¡Sostenedla cerca de las paredes!"}
+  - {id: pista_uv, type: uv-text, at: "@r4.uv", text: "<light_purple><b>Tres letras.</b>\n<light_purple>Sin mí no verías nada.", scale: 1.2, radius: 6}
+  - {id: cofre_pesas, type: container, at: "@r5.chest", items: ["pesa*2"]}
+  - {id: holo_salida, type: text, at: "@exit", text: "<gold><b>SALIDA</b>", offset: {y: 1.5}}
+
+puzzles:
+  t_llave:
+    type: interact
+    name: "La puerta cerrada"
+    objective: "Encuentra la llave y abre la puerta"
+    at: ["@door1", "@door1+0,1,0"]
+    item: llave_tutorial
+    wrong-item-message: "<gray>Está cerrada con llave. ¿Habrá algo en el cofre?"
+    hints:
+      - "Abre el cofre de la sala (clic derecho)."
+      - "Coge la llave, sostenla en la mano y haz clic derecho en la puerta de hierro."
+    xp: 10
+    on-solve:
+      - {type: open, at: "@door1"}
+      - {type: message, text: "<green>¡Bien! Las llaves se usan con clic derecho sobre lo que abren."}
+
+  t_codigo:
+    type: keypad
+    name: "El teclado"
+    objective: "Encuentra los tres números y escribe el código"
+    requires: [t_llave]
+    at: "@r2.keypad"
+    code: "427"
+    title: "<dark_gray>Teclado"
+    hints:
+      - "Hay tres carteles con números de colores repartidos por la sala."
+      - "El cartel junto al botón dice el orden: rojo, verde, azul."
+      - "Rojo 4, verde 2, azul 7: el código es 427."
+    xp: 10
+    on-solve:
+      - {type: open, at: "@door2"}
+      - {type: message, text: "<green>¡Correcto! Busca siempre números, colores y órdenes en las paredes."}
+
+  t_palancas:
+    type: levers
+    name: "Las palancas"
+    objective: "Coloca las palancas como dice el cartel"
+    requires: [t_codigo]
+    levers: "@r3.lever.*"
+    lamps: "@r3.lamp.*"
+    pattern: "0110"
+    hints:
+      - "Cada lámpara se enciende cuando su palanca está bien puesta."
+      - "Arriba, abajo, abajo, arriba: deja las de los extremos como están y baja las dos del centro."
+    xp: 10
+    on-solve:
+      - {type: open, at: "@door3"}
+      - {type: message, text: "<green>¡Hecho! Las luces suelen indicar si vas bien."}
+
+  t_linterna:
+    type: obtain
+    name: "La linterna"
+    objective: "Busca algo para ver lo invisible"
+    requires: [t_palancas]
+    items: [linterna_uv]
+    hints:
+      - "Mira dentro del barril de la esquina."
+      - "El barril está junto a la pared del fondo, a la izquierda al entrar."
+    xp: 5
+
+  t_acertijo:
+    type: answer
+    name: "La estatua parlante"
+    objective: "Responde al acertijo de la estatua"
+    requires: [t_palancas]
+    at: "@r4.statue"
+    question:
+      - "<gray><i>La estatua habla con voz de piedra:"
+      - "<white>«Si me tienes, lo ves todo. Si me miras, te ciego. ¿Qué soy?»"
+    answers: ["luz", "la luz", "el sol", "sol"]
+    hints:
+      - "Con la linterna ultravioleta hay algo escrito en una pared."
+      - "Tres letras... sin ella no verías nada."
+      - "La respuesta es LUZ."
+    xp: 10
+    on-solve:
+      - {type: open, at: "@door4"}
+      - {type: message, text: "<green>¡Exacto! A veces hay que escribir la respuesta en el chat."}
+
+  t_placas:
+    type: plates
+    name: "Las placas"
+    objective: "Mantén pulsadas las dos placas a la vez"
+    requires: [t_acertijo]
+    plates: "@r5.plate.*"
+    weight-item: pesa
+    hold: 2s
+    hints:
+      - "Si sois dos, poneos cada uno en una placa."
+      - "Si juegas solo, en el cofre hay pesas: clic derecho en cada placa con una pesa en la mano."
+    xp: 10
+    on-solve:
+      - {type: clear, at: "@r5.bars"}
+      - {type: message, text: "<green>¡Las rejas se abren! Algunos puzles necesitan trabajo en equipo (o ingenio)."}
+
+  t_salida:
+    type: reach
+    name: "La salida"
+    objective: "Sal por la puerta dorada"
+    requires: [t_placas]
+    region: "@exit"
+    hints:
+      - "La salida está detrás de las rejas que se acaban de abrir."
+      - "Camina hasta el bloque dorado del fondo."
+    xp: 5

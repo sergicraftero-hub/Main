@@ -1,0 +1,121 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                  EscapeRooms — configuración                  ║
+# ╚══════════════════════════════════════════════════════════════╝
+# Textos: messages.yml · Menús: menus.yml · Niveles/misiones/logros: progression.yml
+# Cosméticos: cosmetics.yml · Lobby: lobby.yml · Salas: carpeta rooms/
+# Después de editar: /eradmin reload
+
+server-name: "EscapeVerse"
+timezone: "Europe/Madrid"   # para la recompensa diaria y las misiones
+
+database:
+  type: sqlite              # sqlite (por defecto) o mysql
+  host: localhost
+  port: 3306
+  database: escaperooms
+  user: root
+  password: ""
+  ssl: false
+
+# Tienda web (Tebex). Ver README → "Tienda y Tebex".
+store:
+  url: "https://tienda.tuservidor.com"
+
+resource-pack:
+  enabled: true
+  # builtin: el plugin sirve el pack incluido (o custom-pack.zip si lo pones en esta carpeta).
+  # url: usa un enlace externo (Dropbox directo, GitHub releases, CDN) y su sha1.
+  mode: builtin
+  port: 8163                # puerto del mini servidor web (ábrelo en el firewall)
+  public-host: ""           # IP pública o dominio del servidor, p. ej. play.tuservidor.com
+  url: ""
+  sha1: ""
+  required: false           # true: quien rechace el pack no puede entrar (los de Bedrock nunca lo reciben)
+
+instances:
+  world: er_instances       # mundo vacío que se recrea en cada arranque
+  spacing: 512              # distancia entre copias (las salas deben medir menos que esto - 32)
+  base-y: 64
+  blocks-per-tick: 40000    # bloques pegados por tick al preparar/reiniciar salas
+  warm-per-room: 1          # copias preparadas de antemano por sala
+  max-per-room: 8           # partidas simultáneas por sala
+  max-total: 60
+
+game:
+  reconnect-grace-seconds: 180   # tiempo para volver a la partida tras desconectarse
+  end-delay-seconds: 12          # tras ganar/perder, segundos antes de volver al lobby
+  allowed-commands: [pista, hint, salir, leave, lobby, hub, spawn, grupo, party, g, msg, tell, w, r, reply, menu, m]
+
+queue:
+  min-players: 2                 # jugadores para empezar una partida pública
+  countdown-seconds: 45
+  full-countdown-seconds: 8
+
+party:
+  max-size: 10
+
+access:
+  # host: solo el líder del grupo necesita nivel/sala comprada; everyone: todos
+  requirements-check: host
+
+chat:
+  join-messages: true
+  global-prefix: true            # en partida, empezar con ! habla con todo el servidor
+  vip-prefixes:                  # permiso escaperooms.rank.<clave> → prefijo
+    leyenda: "<gradient:#FFD700:#FF8C00><b>LEYENDA</b></gradient> "
+    vipplus: "<aqua><b>VIP+</b></aqua> "
+    vip: "<green><b>VIP</b></green> "
+
+events:
+  xp-multiplier: 1.0             # pon 2.0 para un fin de semana de doble XP
+  keys-multiplier: 1.0
+
+menus:
+  grey-locked-rooms: true
+
+# Etiquetas de dificultad
+difficulties:
+  facil: "<green>Fácil"
+  media: "<yellow>Media"
+  dificil: "<gold>Difícil"
+  experta: "<red>Experta"
+  tutorial: "<aqua>Tutorial"
+
+# Alas temáticas (el menú de salas y los portales del lobby)
+wings:
+  cine:
+    name: "<red><b>🎬 Cine</b>"
+    order: 1
+    slot: 10
+    icon:
+      material: RED_CANDLE
+      model: escape:wing_cine
+      name: "<red><b>🎬 Cine"
+      lore: ["<gray>Misterio, terror, atracos y", "<gray>aventuras de película."]
+  anime:
+    name: "<light_purple><b>🌸 Anime</b>"
+    order: 2
+    slot: 12
+    icon:
+      material: CHERRY_SAPLING
+      model: escape:wing_anime
+      name: "<light_purple><b>🌸 Anime"
+      lore: ["<gray>Ninjas, espíritus, mechas", "<gray>y cazadores de demonios."]
+  videojuegos:
+    name: "<green><b>🎮 Videojuegos</b>"
+    order: 3
+    slot: 14
+    icon:
+      material: TARGET
+      model: escape:wing_games
+      name: "<green><b>🎮 Videojuegos"
+      lore: ["<gray>Píxeles, neones, mazmorras", "<gray>y laboratorios infectados."]
+  originales:
+    name: "<gold><b>🔮 Originales</b>"
+    order: 4
+    slot: 16
+    icon:
+      material: BREWING_STAND
+      model: escape:wing_originals
+      name: "<gold><b>🔮 Originales"
+      lore: ["<gray>Historias propias del servidor:", "<gray>alquimia, faros y bibliotecas."]
