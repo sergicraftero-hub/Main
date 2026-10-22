@@ -551,6 +551,10 @@ public final class RoomSimulator {
                         if (item != null) {
                             give(String.valueOf(item), p.get("amount") instanceof Number n ? n.intValue() : 1);
                         }
+                        for (String spec : strings(p, "items")) {
+                            String[] parts = spec.split("\\*");
+                            give(parts[0].trim(), parts.length > 1 ? Integer.parseInt(parts[1].trim()) : 1);
+                        }
                         applyActions(maps(p, "actions"));
                         propsUsed.add(id);
                         changed = true;

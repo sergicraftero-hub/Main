@@ -473,6 +473,13 @@ public final class PropManager {
             if (item != null) {
                 game.giveItem(p, item, s.getInt("amount", 1));
             }
+            for (String spec : Yml.strings(s, "items")) {
+                String[] parts = spec.split("\\*");
+                game.giveItem(p, parts[0].trim(), parts.length > 1 ? Integer.parseInt(parts[1].trim()) : 1);
+            }
+            if (item == null && s.contains("items") && s.getString("message") == null) {
+                game.broadcast("props.search-found-many", "player", p.getName());
+            }
             String msg = s.getString("message");
             if (msg != null) {
                 game.broadcast(Msg.parse(msg, "player", p.getName()));

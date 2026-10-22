@@ -289,6 +289,7 @@ props:
   search-empty: "<gray>Aquí ya no hay nada."
   search-need-tool: "<gray>Necesitas una herramienta para esto."
   search-found: "<green>🔍 <player> ha encontrado: <item>"
+  search-found-many: "<green>🔍 <player> ha encontrado varias cosas."
   hazard: "<red>¡Cuidado! Vuelves atrás."
   npc-says: "<yellow><npc><dark_gray>: <white><text>"
 

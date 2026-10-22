@@ -1,0 +1,638 @@
+# ─────────────────────────────────────────────────────────────
+#  El Expreso de Medianoche (ala Cine · misterio)
+#  Andén → equipajes → coche cama → restaurante → salón → correo → locomotora
+#  20 puzles, interrogatorios y una acusación final. 50-60 minutos.
+#  Solución del crimen: la doctora Elena Ruiz.
+# ─────────────────────────────────────────────────────────────
+name: "<red><b>El Expreso de Medianoche</b>"
+wing: cine
+difficulty: dificil
+order: 1
+template: expreso
+description:
+  - "<gray>Diciembre de 1928. Un magnate aparece"
+  - "<gray>muerto en el coche cama y alguien ha"
+  - "<gray>cortado los frenos. Descubrid al asesino"
+  - "<gray>y detened el tren antes del puente."
+icon: {material: MINECART, model: "escape:room_express"}
+players: {min: 1, max: 10, recommended: 4}
+time-limit: 60
+estimated-minutes: 55
+access: {level: 3}
+atmosphere: {time: 18000}
+spawn: "@spawn"
+void-y: 0
+stars:
+  two: {time: 52, hints: 4}
+  three: {time: 40, hints: 1}
+hints: {max: 12, penalty: 60s, wrong-answer-penalty: 0s}
+rewards:
+  xp: 900
+  keys: 150
+  xp-per-star: 180
+  first-time: {xp: 1200, keys: 300}
+
+intro:
+  interval: 80
+  lines:
+    - "<gold>Estación de Lausana. 23:40. Nieva."
+    - "<gray>El <gold>Expreso de Medianoche</gold> está a punto de salir hacia Estambul."
+    - "<gray>Habéis perdido los billetes... y el revisor no deja subir a nadie sin uno."
+
+items:
+  billete: {material: PAPER, model: "escape:ticket", name: "<gold>Billete · Tren Nº 4217", lore: ["<gray>Lausana → Estambul", "<gray>Enséñalo en la puerta del vagón."], glow: true}
+  llave_comp3: {material: TRIPWIRE_HOOK, model: "escape:key_brass", name: "<gold><b>Llave del compartimento 3</b>", lore: ["<gray>Estaba en el baúl de Lemaire."], glow: true}
+  fragmento_1: {material: PAPER, model: "escape:fragment", name: "<white>Fragmento de carta (1/3)", lore: ["<gray>«Querida E.: el doce de mayo...»"]}
+  fragmento_2: {material: PAPER, model: "escape:fragment", name: "<white>Fragmento de carta (2/3)", lore: ["<gray>«...de mil novecientos veinticinco...»"]}
+  fragmento_3: {material: PAPER, model: "escape:fragment", name: "<white>Fragmento de carta (3/3)", lore: ["<gray>«...esa misma fecha...»"]}
+  carta:
+    material: WRITTEN_BOOK
+    model: "escape:letter"
+    name: "<white><b>Carta de Lemaire</b> <gray>(reconstruida)"
+    book:
+      title: "Carta reconstruida"
+      author: "V. Lemaire"
+      pages:
+        - "Querida E.:\n\nEl <b>doce de mayo de mil novecientos veinticinco</b> murió tu paciente en Madrid. Tú sabes por qué, y yo también.\n\nDesde entonces me pagas, y seguirás pagando."
+        - "La combinación de mi caja es <b>esa misma fecha</b> (día, mes, año), para que no olvides nunca lo que hiciste.\n\nMañana, en Estambul, doblaremos la cifra.\n\n— V. L."
+  pagare: {material: PAPER, model: "escape:document", name: "<white>Pagaré", lore: ["<gray>«Pagaré a V. Lemaire la suma de", "<gray>50.000 francos.» Firmado: <white>E.R."]}
+  periodico:
+    material: WRITTEN_BOOK
+    model: "escape:newspaper"
+    name: "<white>Le Petit Journal (1925)"
+    book:
+      title: "Le Petit Journal"
+      author: "1925"
+      pages:
+        - "<b>LE PETIT JOURNAL</b>\n14 de mayo de 1925\n\n<b>Absuelta la doctora E.R.</b> por la muerte de un paciente en Madrid.\n\nEl periodista <b>Víctor Lemaire</b> asegura tener pruebas que «cambiarían el veredicto»."
+  tarjeta_doctora: {material: NAME_TAG, model: "escape:place_card", name: "<white>Tarjeta: <b>Dra. Elena Ruiz</b>"}
+  tarjeta_condesa: {material: NAME_TAG, model: "escape:place_card", name: "<white>Tarjeta: <b>Condesa Volkova</b>"}
+  tarjeta_cantante: {material: NAME_TAG, model: "escape:place_card", name: "<white>Tarjeta: <b>Josephine Laurent</b>"}
+  tarjeta_coronel: {material: NAME_TAG, model: "escape:place_card", name: "<white>Tarjeta: <b>Coronel Hargreaves</b>"}
+  menu:
+    material: WRITTEN_BOOK
+    name: "<gold>Carta del restaurante"
+    book:
+      title: "Menú de gala"
+      author: "El maître"
+      pages:
+        - "<b>Mesa del capitán</b>\n\nEl maître perdió el plano de la cena, pero recuerda esto:"
+        - "1. El coronel se sentó <b>de espaldas a la puerta</b> del vagón (la puerta está al oeste).\n\n2. La condesa quedó <b>justo enfrente</b> del coronel."
+        - "3. La doctora tenía a la condesa <b>a su izquierda</b>.\n\n4. La cantante ocupó el sitio que quedaba libre.\n\nPon cada tarjeta en el sitio de la mesa de cada comensal."
+  registro_timbres: {material: PAPER, model: "escape:document", name: "<white>Registro de timbres", lore: ["<gray>23:58 — Comp. 1 (té)", "<gray>00:05 — Comp. 3 (coñac)", "<gray>00:31 — Comp. 4 (agua)"]}
+  partitura:
+    material: WRITTEN_BOOK
+    model: "escape:sheet_music"
+    name: "<light_purple>Partitura «Nuit de Paris»"
+    book:
+      title: "Nuit de Paris"
+      author: "J. Laurent"
+      pages:
+        - "<b>Nuit de Paris</b>\nla canción favorita de la condesa\n\n<b>Mi · Mi · Fa · Sol\nSol · Fa · Mi · Re</b>"
+  nota_cantante:
+    material: WRITTEN_BOOK
+    name: "<light_purple>Diario de Josephine"
+    book:
+      title: "Diario"
+      author: "Josephine Laurent"
+      pages:
+        - "Medianoche. Un golpe seco en la pared del compartimento de al lado me despertó.\n\nAl asomarme vi a alguien con un <b>maletín negro</b> salir del 3 y caminar hacia el salón. Tengo miedo."
+  ginebra: {material: DRAGON_BREATH, model: "escape:bottle_gin", name: "<white>Ginebra"}
+  vermut: {material: DRAGON_BREATH, model: "escape:bottle_vermouth", name: "<red>Vermut rojo"}
+  angostura: {material: DRAGON_BREATH, model: "escape:bottle_bitters", name: "<gold>Angostura"}
+  carta_estambul: {material: PAPER, model: "escape:envelope", name: "<white>Carta para Estambul"}
+  carta_viena: {material: PAPER, model: "escape:envelope", name: "<white>Carta para Viena"}
+  carta_atenas: {material: PAPER, model: "escape:envelope", name: "<white>Carta para Atenas"}
+  carta_paris: {material: PAPER, model: "escape:envelope", name: "<white>Carta para París"}
+  bisturi: {material: IRON_SWORD, model: "escape:scalpel", name: "<red><b>Bisturí manchado</b>", lore: ["<gray>Grabado en el mango: <white>E.R.", "<gray>Tiene restos de sangre."], glow: true}
+  llave_locomotora: {material: TRIPWIRE_HOOK, model: "escape:key_gold", name: "<gold><b>Llave de la locomotora</b>", glow: true}
+  manifiesto:
+    material: WRITTEN_BOOK
+    name: "<gold>Lista de pasajeros"
+    book:
+      title: "Lista de pasajeros"
+      author: "Compagnie des Wagons"
+      pages:
+        - "<b>EXPRESO Nº 4217</b>\nCoche cama\n\n<b>1</b> · Condesa Irina Volkova (n. 1879)\n<b>2</b> · Dra. Elena Ruiz (n. 1891)\n<b>3</b> · Sr. Víctor Lemaire (n. 1871)\n<b>4</b> · Srta. Josephine Laurent (n. 1902)"
+        - "Clase turista:\nCoronel Arthur Hargreaves (n. 1868)\n\nEquipaje del Sr. Lemaire: un baúl con candado de combinación."
+  receta:
+    material: WRITTEN_BOOK
+    name: "<gold>Recetario del bar"
+    book:
+      title: "Recetario"
+      author: "El barman"
+      pages:
+        - "<b>Cóctel «Medianoche»</b>\n\nPrimero la ginebra, que es la base.\nDespués el vermut rojo.\nY al final, unas gotas de angostura.\n\nNunca en otro orden."
+  morse:
+    material: WRITTEN_BOOK
+    name: "<gold>Código Morse"
+    book:
+      title: "Código Morse"
+      author: "Telégrafos"
+      pages:
+        - "A ·−  B −···  C −·−·\nD −··  E ·  F ··−·\nG −−·  H ····  I ··\nJ ·−−−  K −·−  L ·−··\nM −−  N −·  O −−−\nP ·−−·  Q −−·−  R ·−·"
+        - "S ···  T −  U ··−\nV ···−  W ·−−  X −··−\nY −·−−  Z −−··\n\nUna barra / separa palabras."
+  manual:
+    material: WRITTEN_BOOK
+    name: "<gold>Manual del maquinista"
+    book:
+      title: "Manual del maquinista"
+      author: "Compagnie des Wagons"
+      pages:
+        - "<b>EMERGENCIA</b>\n\n1. Libera la presión: todas las válvulas de los manómetros abiertas (encendidas).\n\n2. Freno de emergencia, palancas:\nA abajo · B arriba\nC abajo · D abajo\nE arriba"
+        - "3. Secuencia de parada, en este orden:\n\n<b>1º</b> cierra el regulador\n<b>2º</b> da contravapor\n<b>3º</b> echa arena a los raíles\n<b>4º</b> aprieta el freno"
+
+zones:
+  - {id: platform, region: "@zone.platform", name: "<gold>Estación de Lausana", subtitle: "<gray>23:40"}
+  - {id: luggage, region: "@zone.luggage", name: "<gold>Furgón de equipajes", subtitle: "<gray>El tren se pone en marcha", locked-until: e_subir}
+  - {id: sleeper, region: "@zone.sleeper", name: "<gold>Coche cama", subtitle: "<gray>Algo ha pasado en el compartimento 3", locked-until: e_montacargas}
+  - {id: crime, region: "@zone.crime", name: "<red>La escena del crimen", subtitle: "<gray>Víctor Lemaire", locked-until: e_escena}
+  - {id: dining, region: "@zone.dining", name: "<gold>Coche restaurante", subtitle: "<gray>La cena de anoche", locked-until: e_revisor}
+  - {id: lounge, region: "@zone.lounge", name: "<gold>Coche salón", subtitle: "<gray>Piano, humo y secretos", locked-until: e_comensales}
+  - {id: mail, region: "@zone.mail", name: "<gold>Furgón de correo", subtitle: "<gray>El telégrafo no para de sonar", locked-until: e_cocteles}
+  - {id: tender, region: "@zone.tender", name: "<dark_gray>Ténder", subtitle: "<gray>Carbón y vapor", locked-until: e_tender}
+  - {id: cab, region: "@zone.cab", name: "<red>La locomotora", subtitle: "<gray>¡Detened el tren!", locked-until: e_tender}
+
+props:
+  # andén
+  - id: taquillero
+    type: npc
+    at: "@st.clerk"
+    name: "<gold>Taquillero"
+    profession: librarian
+    talk:
+      - "¿Sin billete? La máquina os imprime uno si escribís el número de vuestro tren."
+      - "El panel de salidas tiene todos los trenes. El vuestro es el «Expreso de Medianoche»."
+      - "Sale trece minutos antes de las doce. ¡Daos prisa!"
+  # furgón de equipajes
+  - {id: manifiesto, type: book, at: "@lug.manifest", item: manifiesto}
+  - {id: etiqueta, type: clue, at: "@lug.tag", text: ["<gray>Etiqueta del baúl: <white>«V. L. — Candado de 4 cifras: el año en que nació su dueño.»"]}
+  - {id: maleta, type: container, at: "@lug.suitcase", items: [periodico]}
+  # coche cama
+  - {id: cuerpo, type: clue, at: "@comp.lemaire.body", text: ["<gray>Víctor Lemaire yace boca abajo junto a la cama.", "<red>Tiene una herida pequeña y limpia en la espalda, hecha con una hoja muy fina."]}
+  - {id: reloj, type: clue, at: "@comp.lemaire.watch", text: ["<gray>Un reloj de bolsillo roto en la mesilla.", "<white>Las agujas se pararon a las <b>00:12</b>."]}
+  - {id: frag_cama, type: search, at: "@comp.lemaire.bed", item: fragmento_1}
+  - {id: frag_papelera, type: search, at: "@comp.condesa.bin", item: fragmento_2}
+  - {id: frag_cenicero, type: search, at: "@sl.ashtray", item: fragmento_3}
+  - {id: escritorio, type: workbench, at: "@comp.lemaire.desk", recipes: [carta], title: "<dark_gray>Escritorio de Lemaire"}
+  - {id: maletin, type: clue, at: "@comp.doctora.bag", text: ["<gray>El maletín negro de la <white>Dra. Ruiz</white>: estetoscopio, frascos, vendas...", "<red>En el estuche de bisturís falta uno."]}
+  - id: revisor_c2
+    type: npc
+    at: "@sl.conductor"
+    name: "<gold>Marcel, el revisor"
+    profession: cartographer
+    until: e_cocteles
+    talk:
+      - "Estuve jugando a las cartas con el coronel en el restaurante desde las once y media hasta las doce y media. No se movió de la mesa."
+      - "Monsieur Lemaire tenía enemigos, pero... ¿quién haría algo así?"
+  - id: cantante
+    type: npc
+    at: "59,5,10"
+    name: "<light_purple>Josephine Laurent"
+    profession: none
+    talk:
+      - "Me acosté a las once. ¡Yo no sé nada!"
+      - "¿Mi maleta? Es privada. Tiene un cierre de piezas que solo sé abrir yo."
+    after-solved: {puzzle: e_maleta, talk: ["Ya habéis leído mi diario... Vi a alguien con un maletín negro. No sé quién era."]}
+  # restaurante
+  - {id: maitre, type: container, at: "@din.maitre", items: [tarjeta_doctora, tarjeta_condesa, tarjeta_cantante, tarjeta_coronel]}
+  - {id: carta_menu, type: book, at: "@din.menu", item: menu}
+  - id: camarero
+    type: npc
+    at: "@din.waiter"
+    name: "<white>Pierre, el camarero"
+    profession: butcher
+    talk:
+      - "Anoche serví la mesa del capitán. Cuatro comensales... no recuerdo dónde se sentó cada uno."
+      - "La centralita de timbres registra cada llamada de los compartimentos, pero hay que ponerla en marcha."
+    after-solved: {puzzle: e_comensales, talk: ["¡Eso es! Así se sentaron. La doctora se levantó antes del postre, hacia las doce."]}
+  - id: coronel
+    type: npc
+    at: "75,5,11"
+    name: "<dark_green>Coronel Hargreaves"
+    profession: weaponsmith
+    talk:
+      - "Jugué a las cartas con el revisor hasta pasada la medianoche. Pregúntele."
+      - "Lemaire era un chantajista. Medio tren tenía motivos para odiarle."
+  # salón
+  - {id: armario_1, type: search, at: "@lng.cabinet.1", item: ginebra}
+  - {id: armario_2, type: search, at: "@lng.cabinet.2", item: vermut}
+  - {id: armario_3, type: search, at: "@lng.cabinet.3", item: angostura}
+  - {id: recetario, type: book, at: "@lng.recipe", item: receta}
+  - id: barman
+    type: npc
+    at: "@lng.barman"
+    name: "<gold>Hans, el barman"
+    profession: fletcher
+    talk:
+      - "Preparadme el cóctel «Medianoche» como manda el recetario y os cuento lo que vi."
+      - "Las botellas están repartidas por los armarios del salón."
+    after-solved: {puzzle: e_cocteles, talk: ["La doctora pidió un coñac doble a las doce y cuarto. Le temblaban las manos y tenía una mancha roja en el puño de la blusa."]}
+  - id: condesa
+    type: npc
+    at: "102,5,13"
+    name: "<aqua>Condesa Volkova"
+    profession: cleric
+    talk:
+      - "Toqué el piano toda la noche. La doctora me acompañaba, creo."
+      - "Si alguien tocara «Nuit de Paris»... me ayudaría a recordar."
+    after-solved: {puzzle: e_piano, talk: ["¡Mi canción! Ahora lo recuerdo: la doctora salió del salón a las doce y cinco con su maletín... y volvió a las doce y cuarto."]}
+  - id: doctora
+    type: npc
+    at: "98,5,14"
+    name: "<white>Dra. Elena Ruiz"
+    profession: cleric
+    talk:
+      - "Estuve toda la noche aquí, en el salón, con la condesa. Pregúntele a ella."
+      - "Lemaire... no lo conocía de nada."
+  # correo
+  - {id: saca, type: search, at: "@mail.sack", items: [carta_estambul, carta_viena, carta_atenas, carta_paris], message: "<white><player> vacía la saca de correo: cuatro cartas sin clasificar."}
+  - {id: tabla_morse, type: book, at: "@mail.morse", item: morse}
+  - id: revisor_c5
+    type: npc
+    at: "@mail.conductor"
+    name: "<gold>Marcel, el revisor"
+    profession: cartographer
+    requires: [e_cocteles]
+    talk:
+      - "Cuando tengáis claro quién fue, decídmelo. Tengo la llave de la locomotora."
+  # locomotora
+  - {id: manual, type: book, at: "@tnd.manual", item: manual}
+  - {id: humo, type: particles, at: "@cab.gauges", particle: CLOUD, interval: 20, count: 1, height: 0.6, until: e_presion}
+
+recipes:
+  - {id: carta, inputs: [fragmento_1, fragmento_2, fragmento_3], output: carta, message: "<white><player> une los tres fragmentos: es una carta de Lemaire."}
+
+ambience:
+  - {sound: "entity.minecart.inside", interval: 6s, volume: 0.25, pitch: 0.7, pitch-variance: 0.05}
+  - {sound: "block.note_block.didgeridoo", zone: "@zone.cab", interval: 12s, volume: 0.3, pitch: 0.5}
+  - {sound: "entity.horse.breathe", zone: "@zone.platform", interval: 20s, volume: 0.2, pitch: 0.5}
+
+timeline:
+  - remaining: 20m
+    actions:
+      - {type: message, text: "<gray><i>El tren acelera. Los vagones se balancean peligrosamente...</i>"}
+      - {type: sound, sound: "entity.minecart.riding", volume: 1, pitch: 0.6}
+  - remaining: 5m
+    actions:
+      - {type: title, title: "<red><b>¡SE VE EL PUENTE!</b>", subtitle: "<gray>5 minutos", stay: 50}
+      - {type: sound, sound: "block.bell.use", volume: 1, pitch: 0.5}
+
+puzzles:
+  # ═════════ ANDÉN ═════════
+  e_billete:
+    type: keypad
+    name: "La máquina de billetes"
+    objective: "Imprime un billete con el número de tu tren"
+    at: "@st.machine"
+    code: "4217"
+    title: "<dark_gray>Máquina de billetes · Nº de tren"
+    hints:
+      - "El panel de salidas de la pared tiene los números de todos los trenes."
+      - "Vuestro tren sale 13 minutos antes de las doce: a las 23:47."
+      - "El tren de las 23:47 a Estambul es el 4217."
+    xp: 20
+    on-solve:
+      - {type: give, item: billete}
+      - {type: message, text: "<gold>La máquina imprime un billete: <b>Nº 4217 · Lausana → Estambul</b>."}
+
+  e_subir:
+    type: interact
+    name: "Al tren"
+    objective: "Sube al tren enseñando el billete en la puerta"
+    requires: [e_billete]
+    at: ["@lug.door", "@lug.door+0,1,0"]
+    item: billete
+    hints:
+      - "La puerta de hierro del vagón está junto al andén."
+      - "Sostén el billete y haz clic derecho en la puerta."
+    xp: 10
+    on-solve:
+      - {type: open, at: "@lug.door"}
+      - {type: teleport, to: "30,5,12", delay: 40}
+      - {type: close, at: "@lug.door", delay: 50}
+      - {type: narrative, interval: 70, delay: 50, lines: ["<gray><i>¡Pasajeros al tren! Las puertas se cierran.</i>", "<gray><i>El Expreso de Medianoche arranca entre la nieve...</i>", "<red><i>Un grito recorre los vagones: ¡han matado a Monsieur Lemaire!</i>"]}
+      - {type: sound, sound: "entity.minecart.riding", volume: 1, pitch: 0.5, delay: 60}
+
+  # ═════════ FURGÓN DE EQUIPAJES ═════════
+  e_baul:
+    type: keypad
+    style: dial
+    name: "El baúl de Lemaire"
+    objective: "Abre el baúl de Lemaire (4 cifras)"
+    requires: [e_subir]
+    at: "@lug.trunk"
+    code: "1871"
+    title: "<dark_gray>Baúl · candado"
+    hints:
+      - "La etiqueta junto al baúl dice cuál es la combinación."
+      - "La lista de pasajeros del atril tiene el año de nacimiento de Lemaire."
+      - "Lemaire nació en 1871."
+    xp: 30
+    on-solve:
+      - {type: give, item: llave_comp3}
+      - {type: message, text: "<gold>Dentro del baúl, entre camisas de seda: la <b>llave del compartimento 3</b>."}
+
+  e_montacargas:
+    type: levers
+    name: "El montacargas"
+    objective: "Mueve las cajas con el montacargas para pasar al coche cama"
+    requires: [e_subir]
+    levers: "@lug.lever.*"
+    pattern: "1011"
+    show-count: true
+    hints:
+      - "El esquema de la pared indica cómo poner cada palanca."
+      - "«Baja» quiere decir activada. I baja, II sube, III baja, IV baja."
+      - "Activa la I, la III y la IV. Deja la II como estaba."
+    xp: 30
+    on-solve:
+      - {type: clear, at: "@lug.crates", interval: 2}
+      - {type: open, at: "@luggage.exit", delay: 30}
+      - {type: message, text: "<gray>Las poleas chirrían y las cajas se apartan. El paso al coche cama está libre."}
+      - {type: sound, sound: "block.chain.place", volume: 1, pitch: 0.6}
+
+  # ═════════ COCHE CAMA ═════════
+  e_escena:
+    type: interact
+    name: "El compartimento 3"
+    objective: "Abre el compartimento de Lemaire"
+    requires: [e_montacargas]
+    at: ["@comp.lemaire.door", "@comp.lemaire.door+0,1,0"]
+    item: llave_comp3
+    hints:
+      - "La puerta de hierro del pasillo con el número 3."
+      - "Usa la llave del baúl de Lemaire en esa puerta."
+    xp: 15
+    on-solve:
+      - {type: open, at: "@comp.lemaire.door"}
+      - {type: title, title: "<red>La escena del crimen", subtitle: "<gray>No toquéis nada... o sí", stay: 50}
+
+  e_carta:
+    type: obtain
+    name: "La carta rota"
+    objective: "Reconstruye la carta rota de Lemaire"
+    requires: [e_escena]
+    items: [carta]
+    hints:
+      - "Hay tres fragmentos: uno en el compartimento 3, otro en la papelera de un vecino y otro en el pasillo."
+      - "Bajo la cama de Lemaire, en la papelera del compartimento 1 y en el cenicero del pasillo."
+      - "Con los tres fragmentos, usa el escritorio (mesa de cartografía) del compartimento 3."
+    xp: 30
+
+  e_caja:
+    type: keypad
+    name: "La caja de Lemaire"
+    objective: "Abre la pequeña caja fuerte del compartimento 3 (6 cifras)"
+    requires: [e_escena]
+    needs: [carta]
+    at: "@comp.lemaire.safe"
+    code: "120525"
+    title: "<dark_gray>Caja fuerte · DD MM AA"
+    hints:
+      - "La carta reconstruida habla de la combinación."
+      - "Es una fecha: día, mes y año (dos cifras cada uno)."
+      - "12 de mayo de 1925 → 120525."
+    xp: 40
+    on-solve:
+      - {type: give, item: pagare}
+      - {type: message, text: "<white>Dentro de la caja hay un <b>pagaré</b> firmado con las iniciales <b>E.R.</b>"}
+
+  e_revisor:
+    type: choice
+    name: "El revisor"
+    objective: "Convence al revisor de que fue un asesinato"
+    requires: [e_escena]
+    npc: revisor_c2
+    title: "<dark_gray>¿Cómo murió Lemaire?"
+    intro:
+      - "<gold>Marcel<dark_gray>: <white>«¿Monsieur Lemaire se ha quitado la vida? ¿Qué ha pasado ahí dentro?»"
+    options:
+      - {material: POTION, name: "<white>Se envenenó", reply: "<gold>Marcel<dark_gray>: <white>«No hay vasos ni frascos en el compartimento...»"}
+      - {material: STONE, name: "<white>Se cayó y se golpeó", reply: "<gold>Marcel<dark_gray>: <white>«¿Con una herida tan fina? No lo creo.»"}
+      - {material: IRON_SWORD, name: "<white>Le apuñalaron por la espalda", correct: true, reply: "<gold>Marcel<dark_gray>: <white>«¡Nadie se apuñala por la espalda! Es un asesinato. Nadie baja de este tren.»"}
+      - {material: LEAD, name: "<white>Le estrangularon", reply: "<gold>Marcel<dark_gray>: <white>«No tiene marcas en el cuello...»"}
+    hints:
+      - "Examina el cuerpo con clic derecho."
+      - "La herida está en la espalda: nadie se hace eso a sí mismo."
+    xp: 30
+    on-solve:
+      - {type: open, at: "@sleeper.exit"}
+      - {type: message, text: "<gold>Marcel<dark_gray>: <white>«Les abro el coche restaurante. Investiguen todo lo que quieran.»"}
+
+  e_maleta:
+    type: slide
+    name: "La maleta de la cantante"
+    objective: "Abre la maleta de piezas de la cantante"
+    requires: [e_montacargas]
+    at: "@comp.cantante.case"
+    title: "<dark_gray>Cierre de piezas"
+    moves: 36
+    seed: 28
+    hints:
+      - "Ordena las piezas del 1 al 8 con el hueco abajo a la derecha."
+      - "Resuelve primero la fila de arriba, luego la columna izquierda, y el resto sale solo."
+    xp: 30
+    on-solve:
+      - {type: give, item: partitura}
+      - {type: give, item: nota_cantante}
+      - {type: message, text: "<light_purple>En la maleta: una <b>partitura</b> y el <b>diario</b> de Josephine."}
+
+  # ═════════ RESTAURANTE ═════════
+  e_comensales:
+    type: frames
+    name: "La mesa del capitán"
+    objective: "Coloca las tarjetas de los comensales en la mesa del capitán"
+    requires: [e_revisor]
+    frames:
+      - {at: "@din.seat.n", item: tarjeta_doctora}
+      - {at: "@din.seat.e", item: tarjeta_condesa}
+      - {at: "@din.seat.s", item: tarjeta_cantante}
+      - {at: "@din.seat.w", item: tarjeta_coronel}
+    hints:
+      - "Las tarjetas están en el atril del maître y las pistas en la carta del restaurante."
+      - "La puerta está al oeste: quien da la espalda a la puerta se sienta en el lado oeste mirando al este."
+      - "Norte: doctora · Este: condesa · Sur: cantante · Oeste: coronel."
+    xp: 50
+    on-solve:
+      - {type: open, at: "@dining.exit"}
+      - {type: message, text: "<white>El camarero asiente: «¡Así fue!». Abre la puerta del coche salón."}
+
+  e_timbres:
+    type: simon
+    name: "La centralita de timbres"
+    objective: "Pon en marcha la centralita de timbres de la cocina"
+    requires: [e_revisor]
+    buttons: "@din.bell.button.*"
+    lamps: "@din.bell.lamp.*"
+    start: "@din.bell.start"
+    rounds: 5
+    seed: 1928
+    hints:
+      - "Pulsa el botón de piedra para ver la secuencia de luces y repítela con los botones de madera."
+      - "Cada ronda añade una luz más. Si fallas, vuelve a pulsar el botón de piedra."
+    xp: 40
+    on-solve:
+      - {type: give, item: registro_timbres}
+      - {type: message, text: "<white>La centralita imprime el registro de anoche: <b>Lemaire llamó a las 00:05</b>."}
+
+  # ═════════ SALÓN ═════════
+  e_piano:
+    type: melody
+    name: "Nuit de Paris"
+    objective: "Toca la canción favorita de la condesa en el piano"
+    requires: [e_comensales]
+    needs: [partitura]
+    keys: "@lng.key.*"
+    notes: [6, 8, 10, 11, 13, 15, 17, 18]
+    melody: [3, 3, 4, 5, 5, 4, 3, 2]
+    sound: "block.note_block.harp"
+    hints:
+      - "La partitura está en la maleta de la cantante."
+      - "Las teclas van de do (izquierda) a do agudo (derecha): do re mi fa sol la si do."
+      - "Teclas 3 3 4 5 5 4 3 2."
+    xp: 40
+    on-solve:
+      - {type: message, text: "<aqua>La condesa cierra los ojos y sonríe. Parece que ahora recuerda algo... habla con ella."}
+
+  e_cocteles:
+    type: deliver
+    name: "El cóctel Medianoche"
+    objective: "Prepara el cóctel «Medianoche» en la barra"
+    requires: [e_comensales]
+    at: "@lng.counter"
+    items: [ginebra, vermut, angostura]
+    ordered: true
+    wrong-order-message: "<red>¡Puaj! El barman tira el cóctel. Hay que seguir la receta."
+    hints:
+      - "Las botellas están en los armarios del salón y la receta en el atril."
+      - "Ginebra, vermut y angostura, en ese orden, sobre la barra."
+    xp: 40
+    on-solve:
+      - {type: open, at: "@lounge.exit"}
+      - {type: message, text: "<gold>Hans<dark_gray>: <white>«Perfecto. Hablemos... y pasad al furgón de correo, el revisor os espera allí.»"}
+
+  # ═════════ CORREO ═════════
+  e_casilleros:
+    type: frames
+    name: "Los casilleros"
+    objective: "Clasifica las cartas en los casilleros de cada país"
+    requires: [e_cocteles]
+    frames:
+      - {at: "@mail.hole.1", item: carta_estambul}
+      - {at: "@mail.hole.2", item: carta_viena}
+      - {at: "@mail.hole.3", item: carta_atenas}
+      - {at: "@mail.hole.4", item: carta_paris}
+    hints:
+      - "Las cartas están en la saca de correo."
+      - "Cada casillero es un país: ¿en qué país está cada ciudad?"
+      - "Estambul → Turquía, Viena → Austria, Atenas → Grecia, París → Francia."
+    xp: 40
+    on-solve:
+      - {type: give, item: bisturi}
+      - {type: message, text: "<red>Al encajar la última carta, el casillero de Turquía cede: un falso fondo... y un <b>bisturí</b> manchado de sangre."}
+
+  e_telegrafo:
+    type: answer
+    name: "El telégrafo"
+    objective: "Descifra el telegrama urgente"
+    requires: [e_cocteles]
+    at: "@mail.telegraph"
+    question:
+      - "<gray><i>El telégrafo repite una y otra vez:</i>"
+      - "<white>·−−· ··− · −· − ·  /  ·−· −−− − −−−"
+    answers: ["puente roto", "puenteroto", "el puente roto", "puente rotto"]
+    hints:
+      - "El libro del atril es una tabla de código Morse."
+      - "Son dos palabras separadas por la barra."
+      - "PUENTE ROTO."
+    xp: 40
+    on-solve:
+      - {type: title, title: "<red><b>¡PUENTE ROTO!</b>", subtitle: "<gray>Hay que detener el tren", stay: 60}
+      - {type: message, text: "<red>Telegrama de la estación de Korva: el puente está roto. Ningún tren debe cruzarlo."}
+
+  e_acusacion:
+    type: choice
+    name: "La acusación"
+    objective: "Di al revisor quién mató a Lemaire"
+    requires: [e_casilleros, e_telegrafo, e_caja, e_timbres, e_piano]
+    npc: revisor_c5
+    title: "<dark_gray>¿Quién mató a Lemaire?"
+    penalty: 120s
+    intro:
+      - "<gold>Marcel<dark_gray>: <white>«Muy bien. ¿Quién fue? Pensadlo bien: solo tenéis una oportunidad... o casi.»"
+    options:
+      - {material: PLAYER_HEAD, name: "<aqua>Condesa Volkova", lore: ["<gray>Pianista aficionada."], reply: "<gold>Marcel<dark_gray>: <white>«Estuvo al piano toda la noche. El barman y la doctora la vieron.»"}
+      - {material: PLAYER_HEAD, name: "<dark_green>Coronel Hargreaves", lore: ["<gray>Militar retirado."], reply: "<gold>Marcel<dark_gray>: <white>«Imposible: jugaba a las cartas conmigo.»"}
+      - {material: PLAYER_HEAD, name: "<light_purple>Josephine Laurent", lore: ["<gray>Cantante de cabaret."], reply: "<gold>Marcel<dark_gray>: <white>«Su timbre sonó a las 00:31 y su diario la exculpa...»"}
+      - {material: PLAYER_HEAD, name: "<white>Dra. Elena Ruiz", lore: ["<gray>Médica."], correct: true, reply: "<gold>Marcel<dark_gray>: <white>«E.R.: Elena Ruiz. El pagaré, el bisturí, el maletín... ¡y salió del salón a las doce y cinco!»"}
+    hints:
+      - "Repasa: hora de la muerte (reloj), quién tenía coartada (revisor, barman, condesa) y las iniciales E.R."
+      - "El bisturí y el pagaré tienen las iniciales E.R. Busca esas iniciales en la lista de pasajeros."
+      - "Fue la doctora Elena Ruiz."
+    xp: 100
+    on-solve:
+      - {type: give, item: llave_locomotora}
+      - {type: narrative, interval: 70, lines: ["<white>La doctora Ruiz palidece...", "<white><i>«¡Me iba a arruinar la vida! ...Y no saldréis de aquí: he cortado los frenos.»</i>", "<gold>Marcel os da la llave de la locomotora. ¡Corred!"]}
+
+  e_tender:
+    type: interact
+    name: "La puerta del ténder"
+    objective: "Abre la puerta del ténder con la llave de la locomotora"
+    requires: [e_acusacion]
+    at: ["@mail.exit", "@mail.exit+0,1,0"]
+    item: llave_locomotora
+    hints:
+      - "La puerta de hierro al final del furgón de correo."
+      - "Sostén la llave de la locomotora y haz clic derecho en la puerta."
+    xp: 10
+    on-solve:
+      - {type: open, at: "@mail.exit"}
+
+  # ═════════ LOCOMOTORA ═════════
+  e_presion:
+    type: lightsout
+    name: "Los manómetros"
+    objective: "Abre todas las válvulas de los manómetros"
+    requires: [e_tender]
+    grid: "@cab.gauges"
+    reset: "@cab.gauges.reset"
+    scramble: [1, 6, 11, 4]
+    hints:
+      - "Cada válvula cambia ella misma y las de arriba, abajo y a los lados."
+      - "El botón negro vuelve a la posición inicial si te lías."
+      - "Desde el inicio pulsa: arriba-izquierda, la 2ª de la fila del medio, la 3ª de abajo y la de arriba a la derecha."
+    xp: 50
+    on-solve:
+      - {type: message, text: "<white>Las válvulas silban: la presión baja."}
+      - {type: sound, sound: "block.fire.extinguish", volume: 1, pitch: 0.6}
+
+  e_frenos:
+    type: levers
+    name: "El freno de emergencia"
+    objective: "Coloca las palancas del freno de emergencia"
+    requires: [e_tender]
+    levers: "@cab.brake.*"
+    pattern: "10110"
+    show-count: true
+    hints:
+      - "El manual del maquinista está en el atril del ténder."
+      - "Abajo = activada. A abajo, B arriba, C abajo, D abajo, E arriba."
+    xp: 40
+
+  e_parada:
+    type: sequence
+    name: "La secuencia de parada"
+    objective: "Detén el tren con la secuencia de parada del manual"
+    requires: [e_presion, e_frenos]
+    buttons: "@cab.ctl.*"
+    order: [3, 4, 2, 1]
+    sound: "block.lever.click"
+    hints:
+      - "La segunda página del manual tiene la secuencia de parada."
+      - "Los botones no están en orden: lee los carteles."
+      - "Regulador, Contravapor, Arenero y Freno."
+    xp: 60
+    on-solve:
+      - {type: narrative, interval: 60, lines: ["<white><i>Las ruedas chirrían, saltan chispas...</i>", "<gold><b>El Expreso de Medianoche se detiene a pocos metros del puente roto.</b>"]}
+      - {type: sound, sound: "entity.minecart.riding", volume: 1, pitch: 2}
