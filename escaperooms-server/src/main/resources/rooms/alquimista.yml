@@ -102,7 +102,8 @@ zones:
 props:
   # patio
   - {id: cofre_cobertizo, type: container, at: "@shed.chest", items: [cuerda, "COAL*3"]}
-  - {id: caja_cobertizo, type: search, at: "@shed.crate", item: gancho, message: "<gray><player> rebusca en la caja y encuentra un <white>gancho oxidado</white>."}
+  - {id: caja_cobertizo, type: search, at: "@shed.crate", item: gancho, message: "<gray><player> rebusca en el barril y encuentra un <white>gancho oxidado</white>."}
+  - {id: barril_vacio, type: clue, at: "@shed.crate+0,0,-1", text: ["<gray>Solo hay serrín y clavos torcidos. Prueba en el otro barril."]}
   - {id: mesa_cobertizo, type: workbench, at: "@shed.bench", recipes: [garfio], title: "<dark_gray>Mesa de trabajo"}
   - {id: flor_1, type: search, at: "@pot.1", item: girasol}
   - {id: flor_2, type: search, at: "@pot.2", item: amapola}
@@ -185,9 +186,9 @@ puzzles:
     objective: "Fabrica algo para alcanzar el fondo del pozo"
     items: [garfio]
     hints:
-      - "En el cobertizo hay un cofre y unas cajas."
+      - "En el cobertizo hay un cofre y dos barriles junto a la puerta."
       - "Necesitas una cuerda y un gancho: combínalos en la mesa de trabajo del cobertizo."
-      - "Cuerda (cofre) + gancho (caja de la derecha) → mesa de trabajo = garfio."
+      - "Cuerda (cofre) + gancho (el barril más cercano a la puerta) → mesa de trabajo = garfio."
     xp: 15
 
   p_pozo:
