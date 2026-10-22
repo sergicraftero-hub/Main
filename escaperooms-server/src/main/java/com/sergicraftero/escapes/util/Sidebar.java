@@ -32,11 +32,7 @@ public final class Sidebar {
         board = Bukkit.getScoreboardManager().getNewScoreboard();
         objective = board.registerNewObjective("er_side", Criteria.DUMMY, title);
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        try {
-            objective.numberFormat(NumberFormat.blank());
-        } catch (NoSuchMethodError ignored) {
-            // older API: numbers stay visible
-        }
+        Cosmetic.apply(() -> objective.numberFormat(NumberFormat.blank())); // hide the red score numbers
         player.setScoreboard(board);
     }
 

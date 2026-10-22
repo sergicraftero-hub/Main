@@ -1,5 +1,6 @@
 package com.sergicraftero.escapes.action;
 
+import com.sergicraftero.escapes.util.Cosmetic;
 import com.sergicraftero.escapes.game.Game;
 import com.sergicraftero.escapes.util.Msg;
 import com.sergicraftero.escapes.util.Yml;
@@ -283,8 +284,8 @@ public final class Actions {
             if (!old.getMaterial().isAir()) {
                 b.getWorld().spawnParticle(Particle.BLOCK, b.getLocation().add(0.5, 0.5, 0.5), 12, 0.3, 0.3, 0.3, old);
             }
-            b.getWorld().playSound(b.getLocation(), data.getMaterial().isAir()
-                    ? old.getSoundGroup().getBreakSound() : data.getSoundGroup().getPlaceSound(), 0.6f, 1f);
+            Cosmetic.apply(() -> b.getWorld().playSound(b.getLocation(), data.getMaterial().isAir()
+                    ? old.getSoundGroup().getBreakSound() : data.getSoundGroup().getPlaceSound(), 0.6f, 1f));
         }
         b.setBlockData(data, false);
     }
@@ -457,7 +458,7 @@ public final class Actions {
                 f.setFireworkMeta(meta);
                 g.tagEntity(f);
             });
-            g.later(fw::detonate, 2);
+            g.later(() -> com.sergicraftero.escapes.util.Cosmetic.apply(fw::detonate), 2);
         };
     }
 

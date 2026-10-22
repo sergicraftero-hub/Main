@@ -167,7 +167,7 @@ public final class CosmeticService {
                     f.setFireworkMeta(meta);
                     f.setPersistent(false);
                 });
-                Bukkit.getScheduler().runTaskLater(plugin, fw::detonate, 3L);
+                Bukkit.getScheduler().runTaskLater(plugin, () -> com.sergicraftero.escapes.util.Cosmetic.apply(fw::detonate), 3L);
             }, delay);
         }
         String particle = c.getString("particle");

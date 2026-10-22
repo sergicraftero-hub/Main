@@ -40,7 +40,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /** EscapeRooms: a whole escape-room server (lobby, rooms, progression, shop) in one plugin. */
-public final class EscapePlugin extends JavaPlugin {
+public class EscapePlugin extends JavaPlugin { // not final: MockBukkit subclasses it in tests
 
     private static EscapePlugin instance;
 

@@ -7,7 +7,6 @@ import com.sergicraftero.escapes.template.Refs;
 import com.sergicraftero.escapes.template.Template;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.Lightable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -27,6 +26,8 @@ import java.util.List;
 public final class LightsOutPuzzle extends Puzzle {
 
     private Block[][] cells;
+    /** The puzzle's own state: the lamps only display it, so nothing else touching them can break it. */
+    private boolean[][] on;
     private int w;
     private int h;
     private List<Block> reset;
@@ -73,6 +74,7 @@ public final class LightsOutPuzzle extends Puzzle {
         h = rows.size();
         w = rows.get(0).size();
         cells = new Block[h][w];
+        on = new boolean[h][w];
         for (int r = 0; r < h; r++) {
             for (int c = 0; c < w; c++) {
                 cells[r][c] = rows.get(r).get(c);
@@ -85,9 +87,10 @@ public final class LightsOutPuzzle extends Puzzle {
     }
 
     private void scramble() {
-        for (Block[] row : cells) {
-            for (Block b : row) {
-                Actions.setLit(b, true);
+        for (int r = 0; r < h; r++) {
+            for (int c = 0; c < w; c++) {
+                on[r][c] = true;
+                Actions.setLit(cells[r][c], true);
             }
         }
         for (String s : list("scramble")) {
@@ -110,12 +113,8 @@ public final class LightsOutPuzzle extends Puzzle {
         if (r < 0 || c < 0 || r >= h || c >= w) {
             return;
         }
-        Block b = cells[r][c];
-        Actions.setLit(b, !lit(b));
-    }
-
-    private static boolean lit(Block b) {
-        return b.getBlockData() instanceof Lightable l && l.isLit();
+        on[r][c] = !on[r][c];
+        Actions.setLit(cells[r][c], on[r][c]);
     }
 
     @Override
@@ -141,29 +140,23 @@ public final class LightsOutPuzzle extends Puzzle {
     }
 
     private boolean allLit() {
-        for (Block[] row : cells) {
-            for (Block b : row) {
-                if (!lit(b)) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return litCount() == w * h;
     }
 
-    @Override
-    public double progress() {
-        if (cells == null) {
-            return -1;
-        }
+    private int litCount() {
         int n = 0;
-        for (Block[] row : cells) {
-            for (Block b : row) {
-                if (lit(b)) {
+        for (boolean[] row : on) {
+            for (boolean b : row) {
+                if (b) {
                     n++;
                 }
             }
         }
-        return (double) n / (w * h);
+        return n;
+    }
+
+    @Override
+    public double progress() {
+        return on == null ? -1 : (double) litCount() / (w * h);
     }
 }

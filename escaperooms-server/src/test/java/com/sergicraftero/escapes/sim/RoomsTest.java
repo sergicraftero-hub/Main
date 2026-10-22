@@ -91,6 +91,22 @@ class RoomsTest {
     }
 
     @Test
+    void everyBlockExistsInMinecraft() throws Exception {
+        List<String> unknown = new ArrayList<>();
+        for (String id : Builders.ids()) {
+            for (String data : Builders.build(id).palette()) {
+                int bracket = data.indexOf('[');
+                String name = (bracket < 0 ? data : data.substring(0, bracket)).replace("minecraft:", "");
+                org.bukkit.Material m = org.bukkit.Material.getMaterial(name.toUpperCase(java.util.Locale.ROOT));
+                if (m == null || !m.isBlock()) {
+                    unknown.add(id + ": " + data);
+                }
+            }
+        }
+        assertTrue(unknown.isEmpty(), "blocks that don't exist in this Minecraft version: " + unknown);
+    }
+
+    @Test
     void templatesRoundTrip() throws Exception {
         for (String id : Builders.ids()) {
             Template t = Builders.build(id);

@@ -34,7 +34,8 @@ public final class PlatesPuzzle extends Puzzle {
 
     private List<Block> plates;
     private final Map<Block, BlockDisplay> weights = new HashMap<>();
-    private long pressedSince;
+    /** Server ticks the plates have been held down (puzzles tick every 5 server ticks). */
+    private long pressedTicks = -1;
 
     public PlatesPuzzle(PuzzleDef def) {
         super(def);
@@ -70,8 +71,8 @@ public final class PlatesPuzzle extends Puzzle {
         Location l = b.getLocation().add(0.2, 0.05, 0.2);
         BlockDisplay d = l.getWorld().spawn(l, BlockDisplay.class, e -> {
             e.setBlock(Material.valueOf(str("weight-block", "IRON_BLOCK")).createBlockData());
-            e.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(),
-                    new Vector3f(0.6f, 0.6f, 0.6f), new AxisAngle4f()));
+            com.sergicraftero.escapes.util.Cosmetic.apply(() -> e.setTransformation(new Transformation(new Vector3f(),
+                    new AxisAngle4f(), new Vector3f(0.6f, 0.6f, 0.6f), new AxisAngle4f())));
         });
         game.tagEntity(d);
         weights.put(b, d);
@@ -103,20 +104,20 @@ public final class PlatesPuzzle extends Puzzle {
     @Override
     public void tick() {
         int n = pressed();
-        long hold = com.sergicraftero.escapes.util.Yml.ticks(def.section().get("hold"), 40) * 50;
+        long hold = com.sergicraftero.escapes.util.Yml.ticks(def.section().get("hold"), 40);
         if (n >= plates.size()) {
-            if (pressedSince == 0) {
-                pressedSince = System.currentTimeMillis();
+            if (pressedTicks < 0) {
+                pressedTicks = 0;
                 game.players().forEach(pl -> pl.playSound(pl.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 0.7f, 1.5f));
-            } else if (System.currentTimeMillis() - pressedSince >= hold) {
+            } else if ((pressedTicks += 5) >= hold) {
                 Player any = game.players().isEmpty() ? null : game.players().get(0);
                 solve(any);
             }
         } else {
-            if (pressedSince != 0) {
+            if (pressedTicks >= 0) {
                 game.players().forEach(pl -> pl.playSound(pl.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 0.6f, 1.5f));
             }
-            pressedSince = 0;
+            pressedTicks = -1;
         }
         if (n > 0 && n < plates.size()) {
             for (Player p : game.players()) {

@@ -136,7 +136,7 @@ public record ItemSpec(String id, Material material, String model, String name, 
             for (String page : pages) {
                 comps.add(Msg.parse(page, placeholders));
             }
-            bm.addPages(comps.toArray(new net.kyori.adventure.text.Component[0]));
+            Cosmetic.apply(() -> bm.addPages(comps.toArray(new net.kyori.adventure.text.Component[0])));
         }
         if (color != null) {
             Color c = Color.fromRGB(Integer.parseInt(color.replace("#", ""), 16));

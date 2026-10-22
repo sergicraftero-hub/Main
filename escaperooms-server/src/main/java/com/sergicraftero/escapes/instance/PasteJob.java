@@ -134,7 +134,7 @@ public final class PasteJob {
                     if (Boolean.TRUE.equals(data.get("glow"))) {
                         sign.getSide(Side.FRONT).setGlowingText(true);
                     }
-                    sign.setWaxed(true);
+                    com.sergicraftero.escapes.util.Cosmetic.apply(() -> sign.setWaxed(true)); // players can't edit it
                     sign.update(true, false);
                 }
             }
@@ -191,7 +191,11 @@ public final class PasteJob {
     public static void setLecternBook(Block b, ItemStack book) {
         String data = b.getBlockData().getAsString();
         if (data.contains("has_book=false")) {
-            b.setBlockData(org.bukkit.Bukkit.createBlockData(data.replace("has_book=false", "has_book=true")), false);
+            try {
+                b.setBlockData(org.bukkit.Bukkit.createBlockData(data.replace("has_book=false", "has_book=true")), false);
+            } catch (IllegalArgumentException ignored) {
+                // the server can't parse its own state string (test servers): the book still goes in
+            }
         }
         if (b.getState() instanceof Lectern lectern) {
             lectern.getInventory().setItem(0, book);

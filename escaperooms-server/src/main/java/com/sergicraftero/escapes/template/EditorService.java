@@ -112,8 +112,8 @@ public final class EditorService {
             TextDisplay d = s.world.spawn(l, TextDisplay.class, t -> {
                 t.text(Msg.parse("<yellow>" + Msg.escape(e.getKey()) + (m.isBox() ? " <gray>[caja]" : "")
                         + (m.facing() != null ? " <gray>→" + m.facing() : "")));
-                t.setBillboard(Display.Billboard.CENTER);
-                t.setSeeThrough(true);
+                com.sergicraftero.escapes.util.Cosmetic.apply(() -> t.setBillboard(Display.Billboard.CENTER));
+                com.sergicraftero.escapes.util.Cosmetic.apply(() -> t.setSeeThrough(true));
                 t.setPersistent(false);
                 t.getPersistentDataContainer().set(Keys.INSTANCE, PersistentDataType.STRING, "editor");
             });

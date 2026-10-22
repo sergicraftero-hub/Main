@@ -16,8 +16,9 @@ import java.util.UUID;
 /** Routes clicks to {@link Menu}s and blocks every way of moving items in or out of them. */
 public final class MenuListener implements Listener {
 
-    /** Per-player click cooldown: Bedrock and fast double clicks fire twice. */
+    /** Per-player, per-slot click cooldown: Bedrock and fast double clicks fire the same slot twice. */
     private final Map<UUID, Long> lastClick = new HashMap<>();
+    private final Map<UUID, Integer> lastSlot = new HashMap<>();
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onClick(InventoryClickEvent e) {
@@ -34,10 +35,12 @@ public final class MenuListener implements Listener {
         }
         long now = System.currentTimeMillis();
         Long last = lastClick.get(p.getUniqueId());
-        if (last != null && now - last < 120) {
+        Integer slot = lastSlot.get(p.getUniqueId());
+        if (last != null && slot != null && slot == e.getRawSlot() && now - last < 120) {
             return;
         }
         lastClick.put(p.getUniqueId(), now);
+        lastSlot.put(p.getUniqueId(), e.getRawSlot());
         menu.click(new Menu.Click(p, e.getRawSlot(), e.getClick(), menu));
     }
 
@@ -54,5 +57,6 @@ public final class MenuListener implements Listener {
             menu.closed();
         }
         lastClick.remove(e.getPlayer().getUniqueId());
+        lastSlot.remove(e.getPlayer().getUniqueId());
     }
 }

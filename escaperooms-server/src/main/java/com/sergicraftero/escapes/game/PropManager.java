@@ -4,6 +4,7 @@ import com.sergicraftero.escapes.action.Action;
 import com.sergicraftero.escapes.action.Actions;
 import com.sergicraftero.escapes.gui.RecipeMenu;
 import com.sergicraftero.escapes.instance.PasteJob;
+import com.sergicraftero.escapes.util.Cosmetic;
 import com.sergicraftero.escapes.util.Keys;
 import com.sergicraftero.escapes.util.Msg;
 import com.sergicraftero.escapes.util.Yml;
@@ -229,7 +230,7 @@ public final class PropManager {
             try {
                 doSpawn();
             } catch (RuntimeException ex) {
-                game.plugin().getLogger().warning("[" + game.room().id + "] Prop " + id + " failed: " + ex);
+                game.plugin().getLogger().log(java.util.logging.Level.WARNING, "[" + game.room().id + "] Prop " + id + " failed: " + ex, ex);
             }
         }
 
@@ -245,8 +246,7 @@ public final class PropManager {
                     l.setYaw(yaw());
                     tag(l.getWorld().spawn(l, TextDisplay.class, d -> {
                         styleText(d, s.getString("text", ""));
-                        d.setVisibleByDefault(false);
-                        d.setGlowing(false);
+                        Cosmetic.apply(() -> d.setVisibleByDefault(false));
                     }));
                 }
                 case "npc" -> spawnNpc();
@@ -282,9 +282,9 @@ public final class PropManager {
                     tag(l.getWorld().spawn(l, ItemDisplay.class, d -> {
                         d.setItemStack(it);
                         float scale = (float) s.getDouble("scale", 0.6);
-                        d.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(),
-                                new Vector3f(scale, scale, scale), new AxisAngle4f()));
-                        d.setBillboard(s.getBoolean("billboard", false) ? Display.Billboard.CENTER : Display.Billboard.FIXED);
+                        Cosmetic.apply(() -> d.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(),
+                                new Vector3f(scale, scale, scale), new AxisAngle4f())));
+                        Cosmetic.apply(() -> d.setBillboard(s.getBoolean("billboard", false) ? Display.Billboard.CENTER : Display.Billboard.FIXED));
                     }));
                 }
                 case "search" -> blocks.addAll(game.blocks(at()));
@@ -301,7 +301,8 @@ public final class PropManager {
                 case "container" -> {
                     for (Block b : game.blocks(at())) {
                         if (b.getState() instanceof Container c) {
-                            Inventory inv = c.getInventory();
+                            // fill the snapshot and write it back: works the same on every server build
+                            Inventory inv = c.getSnapshotInventory();
                             if (s.getBoolean("clear", true)) {
                                 inv.clear();
                             }
@@ -310,16 +311,18 @@ public final class PropManager {
                                 String[] parts = items.get(i).split("\\*");
                                 int amount = parts.length > 1 ? Integer.parseInt(parts[1].trim()) : 1;
                                 ItemStack it = game.item(parts[0].trim(), amount);
-                                if (it != null) {
-                                    int slot = s.contains("slots") ? s.getIntegerList("slots").get(Math.min(i, s.getIntegerList("slots").size() - 1))
-                                            : Math.min(inv.getSize() - 1, (i * 3 + 4) % inv.getSize());
-                                    if (inv.getItem(slot) != null) {
-                                        inv.addItem(it);
-                                    } else {
-                                        inv.setItem(slot, it);
-                                    }
+                                if (it == null) {
+                                    continue;
+                                }
+                                int slot = s.contains("slots") ? s.getIntegerList("slots").get(Math.min(i, s.getIntegerList("slots").size() - 1))
+                                        : Math.min(inv.getSize() - 1, (i * 3 + 4) % inv.getSize());
+                                if (inv.getItem(slot) != null) {
+                                    inv.addItem(it);
+                                } else {
+                                    inv.setItem(slot, it);
                                 }
                             }
+                            c.update(true, false);
                         }
                     }
                 }
@@ -358,21 +361,21 @@ public final class PropManager {
 
         private void styleText(TextDisplay d, String text) {
             d.text(Msg.parse(text));
-            d.setBillboard(Display.Billboard.valueOf(s.getString("billboard", type.startsWith("uv") ? "FIXED" : "CENTER")
-                    .toUpperCase(Locale.ROOT)));
+            Cosmetic.apply(() -> d.setBillboard(Display.Billboard.valueOf(s.getString("billboard", type.startsWith("uv") ? "FIXED" : "CENTER")
+                    .toUpperCase(Locale.ROOT))));
             float scale = (float) s.getDouble("scale", 1.0);
-            d.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(), new Vector3f(scale, scale, scale),
-                    new AxisAngle4f()));
-            d.setShadowed(s.getBoolean("shadow", false));
-            d.setSeeThrough(false);
-            d.setLineWidth(s.getInt("width", 200));
+            Cosmetic.apply(() -> d.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(),
+                    new Vector3f(scale, scale, scale), new AxisAngle4f())));
+            Cosmetic.apply(() -> d.setShadowed(s.getBoolean("shadow", false)));
+            Cosmetic.apply(() -> d.setSeeThrough(false));
+            Cosmetic.apply(() -> d.setLineWidth(s.getInt("width", 200)));
             if (s.contains("background")) {
-                d.setBackgroundColor(org.bukkit.Color.fromARGB((int) Long.parseLong(s.getString("background").replace("#", ""), 16)));
+                Cosmetic.apply(() -> d.setBackgroundColor(org.bukkit.Color.fromARGB((int) Long.parseLong(s.getString("background").replace("#", ""), 16))));
             } else if (type.startsWith("uv")) {
-                d.setBackgroundColor(org.bukkit.Color.fromARGB(0, 0, 0, 0));
+                Cosmetic.apply(() -> d.setBackgroundColor(org.bukkit.Color.fromARGB(0, 0, 0, 0)));
             }
-            d.setBrightness(new Display.Brightness(15, 15));
-            d.setAlignment(TextDisplay.TextAlignment.CENTER);
+            Cosmetic.apply(() -> d.setBrightness(new Display.Brightness(15, 15)));
+            Cosmetic.apply(() -> d.setAlignment(TextDisplay.TextAlignment.CENTER));
         }
 
         private void spawnNpc() {
@@ -385,7 +388,7 @@ public final class PropManager {
                 v.setCollidable(false);
                 v.setGravity(false);
                 v.setPersistent(false);
-                v.setRemoveWhenFarAway(false);
+                Cosmetic.apply(() -> v.setRemoveWhenFarAway(false));
                 v.customName(Msg.parse(s.getString("name", "NPC")));
                 v.setCustomNameVisible(true);
                 Villager.Profession prof = org.bukkit.Registry.VILLAGER_PROFESSION.get(
@@ -418,7 +421,7 @@ public final class PropManager {
         boolean click(Player p, Block b, boolean right, ItemStack hand) {
             switch (type) {
                 case "search" -> {
-                    search(p);
+                    search(p, b);
                     return true;
                 }
                 case "workbench" -> {
@@ -441,7 +444,7 @@ public final class PropManager {
             }
         }
 
-        private void search(Player p) {
+        private void search(Player p, Block clicked) {
             boolean perPlayer = s.getBoolean("per-player", false);
             boolean already = perPlayer ? found.contains(p.getUniqueId()) : foundOnce;
             if (already) {
@@ -490,8 +493,7 @@ public final class PropManager {
             }
             List<Action> actions = Actions.parseList(s, "actions", game.plugin().getLogger(), game.room().id + "/" + id);
             game.runActions(actions, p);
-            p.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, p.getTargetBlockExact(5) == null ? p.getLocation()
-                    : p.getTargetBlockExact(5).getLocation().add(0.5, 1, 0.5), 10, 0.3, 0.3, 0.3);
+            p.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, clicked.getLocation().add(0.5, 1, 0.5), 10, 0.3, 0.3, 0.3);
         }
 
         boolean clickEntity(Player p, boolean right) {

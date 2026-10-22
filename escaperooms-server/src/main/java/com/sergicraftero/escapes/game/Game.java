@@ -300,7 +300,7 @@ public final class Game {
                 if (take >= it.getAmount()) {
                     p.getInventory().setItem(i, null);
                 } else {
-                    it.setAmount(it.getAmount() - take);
+                    p.getInventory().setItem(i, minus(it, take));
                 }
             }
         }
@@ -329,18 +329,28 @@ public final class Game {
     public boolean consume(Player p, String id) {
         ItemStack hand = p.getInventory().getItemInMainHand();
         if (id.equals(Keys.itemId(hand))) {
-            hand.setAmount(hand.getAmount() - 1);
+            p.getInventory().setItemInMainHand(minus(hand, 1));
             return true;
         }
         ItemStack[] contents = p.getInventory().getContents();
         for (int i = 0; i < contents.length; i++) {
             ItemStack it = contents[i];
             if (it != null && id.equals(Keys.itemId(it))) {
-                it.setAmount(it.getAmount() - 1);
+                p.getInventory().setItem(i, minus(it, 1));
                 return true;
             }
         }
         return false;
+    }
+
+    /** A copy of the stack with {@code n} fewer items, or null when none are left (always written back). */
+    public static ItemStack minus(ItemStack it, int n) {
+        if (it.getAmount() <= n) {
+            return null;
+        }
+        ItemStack less = it.clone();
+        less.setAmount(it.getAmount() - n);
+        return less;
     }
 
     public void inventoryChanged(Player p) {
@@ -368,7 +378,7 @@ public final class Game {
             try {
                 pz.attach(this);
             } catch (RuntimeException e) {
-                plugin.getLogger().severe("[" + room.id + "] Puzzle " + def.id() + " failed to set up: " + e);
+                plugin.getLogger().log(java.util.logging.Level.SEVERE, "[" + room.id + "] Puzzle " + def.id() + " failed to set up: " + e, e);
                 e.printStackTrace();
             }
         }

@@ -8,6 +8,7 @@ import com.sergicraftero.escapes.room.RoomDef;
 import com.sergicraftero.escapes.template.Refs;
 import com.sergicraftero.escapes.template.Template;
 import com.sergicraftero.escapes.template.TemplateStore;
+import com.sergicraftero.escapes.util.Cosmetic;
 import com.sergicraftero.escapes.util.Keys;
 import com.sergicraftero.escapes.util.Msg;
 import com.sergicraftero.escapes.util.Sidebar;
@@ -292,7 +293,7 @@ public final class LobbyService {
                 Location hl = l.clone().add(0, 2.55, 0);
                 TextDisplay d = world.spawn(hl, TextDisplay.class, t -> {
                     t.text(Msg.parse(sub));
-                    t.setBillboard(Display.Billboard.CENTER);
+                    Cosmetic.apply(() -> t.setBillboard(Display.Billboard.CENTER));
                     t.setPersistent(false);
                     t.getPersistentDataContainer().set(Keys.LOBBY, PersistentDataType.STRING, "label:" + id);
                 });
@@ -307,10 +308,10 @@ public final class LobbyService {
             }
             Location l = at(at).add(0, s.getDouble("height", 0), 0);
             TextDisplay d = world.spawn(l, TextDisplay.class, t -> {
-                t.setBillboard(Display.Billboard.valueOf(s.getString("billboard", "CENTER").toUpperCase(Locale.ROOT)));
+                Cosmetic.apply(() -> t.setBillboard(Display.Billboard.valueOf(s.getString("billboard", "CENTER").toUpperCase(Locale.ROOT))));
                 t.setPersistent(false);
-                t.setLineWidth(s.getInt("width", 220));
-                t.setShadowed(true);
+                Cosmetic.apply(() -> t.setLineWidth(s.getInt("width", 220)));
+                Cosmetic.apply(() -> t.setShadowed(true));
                 t.getPersistentDataContainer().set(Keys.LOBBY, PersistentDataType.STRING, "holo:" + id);
             });
             holograms.put(id, d);

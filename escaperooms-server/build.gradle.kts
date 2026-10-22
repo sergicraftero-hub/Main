@@ -34,6 +34,34 @@ dependencies {
         compileOnly("io.papermc.paper:paper-api:$paperVersion")
     }
 
+    // Integration tests run the whole plugin on MockBukkit (a fake server).
+    testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v1.21:4.43.1") {
+        exclude(group = "io.papermc.paper")
+    }
+    if (localPaperApi != null) {
+        testImplementation(files(localPaperApi))
+        providers.gradleProperty("brigadierJar").orNull?.let { testImplementation(files(it)) }
+        testImplementation(platform("net.kyori:adventure-bom:4.20.0"))
+        testImplementation("net.kyori:adventure-api")
+        testImplementation("net.kyori:adventure-text-minimessage")
+        testImplementation("net.kyori:adventure-text-serializer-gson")
+        testImplementation("net.kyori:adventure-text-serializer-legacy")
+        testImplementation("net.kyori:adventure-text-serializer-plain")
+        testImplementation("net.kyori:adventure-text-logger-slf4j")
+        testImplementation("com.google.guava:guava:33.3.1-jre")
+        testImplementation("org.joml:joml:1.10.8")
+        testImplementation("it.unimi.dsi:fastutil:8.5.15")
+        testImplementation("net.md-5:bungeecord-chat:1.20-R0.2")
+        testImplementation("org.slf4j:slf4j-api:2.0.9")
+        testImplementation("org.apache.logging.log4j:log4j-api:2.17.1")
+        testImplementation("org.apache.maven:maven-resolver-provider:3.9.6")
+        testImplementation("org.jetbrains:annotations:26.0.1")
+        testImplementation("org.jspecify:jspecify:1.0.0")
+        testImplementation("org.xerial:sqlite-jdbc:3.47.1.0")
+    } else {
+        testImplementation("io.papermc.paper:paper-api:$paperVersion")
+        testImplementation("org.xerial:sqlite-jdbc:3.47.1.0")
+    }
     testImplementation("org.yaml:snakeyaml:2.2")
     testImplementation("com.google.code.gson:gson:2.11.0")
     testImplementation(platform("org.junit:junit-bom:5.11.3"))
@@ -72,8 +100,9 @@ tasks {
     }
     test {
         useJUnitPlatform()
+        maxHeapSize = "6g"
         testLogging {
-            events("failed")
+            events("failed", "skipped")
             showStandardStreams = true
             exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
         }

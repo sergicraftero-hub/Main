@@ -54,7 +54,11 @@ public final class FramesPuzzle extends Puzzle {
             BlockFace face = facing == null ? BlockFace.SOUTH : BlockFace.valueOf(facing.toUpperCase(Locale.ROOT));
             Location l = b.getLocation();
             ItemFrame frame = l.getWorld().spawn(l, ItemFrame.class, fr -> {
-                fr.setFacingDirection(face, true);
+                try {
+                    fr.setFacingDirection(face, true);
+                } catch (IllegalArgumentException ex) {
+                    fr.setFacingDirection(BlockFace.SOUTH, true); // only test servers refuse floor/ceiling frames
+                }
                 fr.setFixed(true);
                 fr.setVisible(!f.getBoolean("invisible", false));
                 String start = f.getString("start-item");
@@ -110,7 +114,7 @@ public final class FramesPuzzle extends Puzzle {
             }
             ItemStack one = hand.clone();
             one.setAmount(1);
-            hand.setAmount(hand.getAmount() - 1);
+            p.getInventory().setItemInMainHand(com.sergicraftero.escapes.game.Game.minus(hand, 1));
             frame.setItem(one, false);
             frame.setRotation(Rotation.NONE);
             p.playSound(frame.getLocation(), Sound.ENTITY_ITEM_FRAME_ADD_ITEM, 1f, 1f);

@@ -6,7 +6,6 @@ import com.sergicraftero.escapes.template.TemplateStore;
 import com.sergicraftero.escapes.util.Keys;
 import com.sergicraftero.escapes.world.VoidGenerator;
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Difficulty;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
@@ -293,8 +292,7 @@ public final class InstanceManager {
         for (int cx = minCx; cx <= maxCx; cx++) {
             for (int cz = minCz; cz <= maxCz; cz++) {
                 if (add) {
-                    Chunk chunk = world.getChunkAt(cx, cz);
-                    chunk.addPluginChunkTicket(plugin);
+                    world.addPluginChunkTicket(cx, cz, plugin); // loads the chunk and keeps it loaded
                 } else {
                     world.removePluginChunkTicket(cx, cz, plugin);
                 }
