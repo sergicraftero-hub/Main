@@ -5,11 +5,11 @@ hotbar:
   menu:
     slot: 0
     action: "menu:main"
-    item: {material: COMPASS, model: "escape:menu_compass", name: "<gold><b>Menú</b> <gray>(clic derecho)"}
+    item: {material: COMPASS, name: "<gold><b>Menú</b> <gray>(clic derecho)"}
   rooms:
     slot: 1
     action: "menu:wings"
-    item: {material: FILLED_MAP, model: "escape:menu_rooms", name: "<yellow><b>Salas</b> <gray>(clic derecho)"}
+    item: {material: FILLED_MAP, name: "<yellow><b>Salas</b> <gray>(clic derecho)"}
   profile:
     slot: 4
     action: "menu:profile"
@@ -42,7 +42,6 @@ main:
       action: "menu:wings"
       item:
         material: FILLED_MAP
-        model: "escape:menu_rooms"
         name: "<gold><b>JUGAR</b>"
         lore: ["<gray>Elige una sala por temática:", "<gray>cine, anime, videojuegos y originales.", "", "<yellow>▶ Clic para ver las salas"]
     profile:

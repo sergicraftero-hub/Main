@@ -64,7 +64,7 @@ public final class MemoryPuzzle extends Puzzle {
         private boolean busy;
 
         Board(Player p) {
-            super(5, MenuStyle.title(p, "generic", Msg.parse(str("title", "<dark_gray>Memoria"))));
+            super(5, MenuStyle.title(p, "generic", 5, Msg.parse(str("title", "<dark_gray>Memoria"))));
             this.player = p;
             int pairs = Math.max(2, Math.min(12, integer("pairs", 8)));
             List<Material> icons = new ArrayList<>();

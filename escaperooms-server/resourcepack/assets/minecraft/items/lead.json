@@ -1,0 +1,27 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "minecraft:custom_model_data",
+    "index": 0,
+    "entries": [
+      {
+        "threshold": 6647179,
+        "model": {
+          "type": "minecraft:model",
+          "model": "escape:item/rope"
+        }
+      },
+      {
+        "threshold": 8123425,
+        "model": {
+          "type": "minecraft:model",
+          "model": "escape:item/menu_party"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "minecraft:item/lead"
+    }
+  }
+}

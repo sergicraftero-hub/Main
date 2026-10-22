@@ -86,6 +86,11 @@ public final class Storage {
     }
 
     private void connect() throws SQLException {
+        try {
+            Class.forName(mysql ? "com.mysql.cj.jdbc.Driver" : "org.sqlite.JDBC"); // drivers bundled with Paper
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("JDBC driver not found: " + e.getMessage());
+        }
         connection = mysql ? DriverManager.getConnection(url, user, password) : DriverManager.getConnection(url);
         if (!mysql) {
             try (Statement st = connection.createStatement()) {

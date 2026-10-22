@@ -107,7 +107,6 @@ wings:
     slot: 14
     icon:
       material: TARGET
-      model: escape:wing_games
       name: "<green><b>🎮 Videojuegos"
       lore: ["<gray>Píxeles, neones, mazmorras", "<gray>y laboratorios infectados."]
   originales:

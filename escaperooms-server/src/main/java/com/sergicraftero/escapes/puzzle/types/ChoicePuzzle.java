@@ -79,7 +79,7 @@ public final class ChoicePuzzle extends Puzzle {
             p.sendMessage(Msg.parse(line, "player", p.getName()));
         }
         int rows = Math.max(3, Math.min(6, (options.size() + 8) / 9 + 2));
-        Menu menu = new Menu(rows, MenuStyle.title(p, "generic", Msg.parse(str("title", "<dark_gray>Elige"))));
+        Menu menu = new Menu(rows, MenuStyle.title(p, "generic", rows, Msg.parse(str("title", "<dark_gray>Elige"))));
         int start = 9 + Math.max(0, (9 - Math.min(9, options.size())) / 2);
         for (int i = 0; i < options.size(); i++) {
             Option o = options.get(i);

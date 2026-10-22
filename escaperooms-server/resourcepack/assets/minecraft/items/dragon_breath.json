@@ -1,0 +1,34 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "minecraft:custom_model_data",
+    "index": 0,
+    "entries": [
+      {
+        "threshold": 1223148,
+        "model": {
+          "type": "minecraft:model",
+          "model": "escape:item/bottle_gin"
+        }
+      },
+      {
+        "threshold": 8681697,
+        "model": {
+          "type": "minecraft:model",
+          "model": "escape:item/bottle_bitters"
+        }
+      },
+      {
+        "threshold": 9526172,
+        "model": {
+          "type": "minecraft:model",
+          "model": "escape:item/bottle_vermouth"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "minecraft:item/dragon_breath"
+    }
+  }
+}

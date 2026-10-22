@@ -80,6 +80,14 @@ public class Menu implements InventoryHolder {
     }
 
     public void open(Player p) {
+        if (MenuStyle.painted(p)) {
+            // the painted background already draws the slots: glass fillers would only hide it
+            for (int i = 0; i < inventory.getSize(); i++) {
+                if (MenuStyle.isFiller(inventory.getItem(i))) {
+                    inventory.setItem(i, null);
+                }
+            }
+        }
         p.openInventory(inventory);
     }
 

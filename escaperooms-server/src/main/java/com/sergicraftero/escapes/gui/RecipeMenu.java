@@ -24,7 +24,7 @@ import java.util.List;
 public final class RecipeMenu extends Menu {
 
     public RecipeMenu(Game game, Player p, List<String> allowed, String title) {
-        super(3, MenuStyle.title(p, "generic", Msg.parse(title == null ? Msg.raw("recipes.title") : title)));
+        super(3, MenuStyle.title(p, "generic", 3, Msg.parse(title == null ? Msg.raw("recipes.title") : title)));
         List<ConfigurationSection> recipes = new ArrayList<>();
         for (ConfigurationSection r : game.room().recipes) {
             if (allowed.isEmpty() || allowed.contains(r.getString("id"))) {

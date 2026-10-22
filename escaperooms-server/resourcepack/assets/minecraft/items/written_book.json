@@ -1,0 +1,34 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "minecraft:custom_model_data",
+    "index": 0,
+    "entries": [
+      {
+        "threshold": 5276896,
+        "model": {
+          "type": "minecraft:model",
+          "model": "escape:item/newspaper"
+        }
+      },
+      {
+        "threshold": 8355892,
+        "model": {
+          "type": "minecraft:model",
+          "model": "escape:item/sheet_music"
+        }
+      },
+      {
+        "threshold": 9360063,
+        "model": {
+          "type": "minecraft:model",
+          "model": "escape:item/letter"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "minecraft:item/written_book"
+    }
+  }
+}

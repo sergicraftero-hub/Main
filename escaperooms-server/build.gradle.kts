@@ -14,8 +14,25 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
 }
 
+// -PpaperApiJar=/path/paper-api.jar builds against a locally compiled API (when repo.papermc.io is unreachable).
+val localPaperApi: String? = providers.gradleProperty("paperApiJar").orNull
+
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:$paperVersion")
+    if (localPaperApi != null) {
+        compileOnly(files(localPaperApi))
+        compileOnly(platform("net.kyori:adventure-bom:4.20.0"))
+        compileOnly("net.kyori:adventure-api")
+        compileOnly("net.kyori:adventure-text-minimessage")
+        compileOnly("net.kyori:adventure-text-serializer-plain")
+        compileOnly("com.google.code.gson:gson:2.11.0")
+        compileOnly("com.google.guava:guava:33.3.1-jre")
+        compileOnly("org.joml:joml:1.10.8")
+        compileOnly("org.jetbrains:annotations:26.0.1")
+        compileOnly("org.jspecify:jspecify:1.0.0")
+        compileOnly("net.md-5:bungeecord-chat:1.20-R0.2")
+    } else {
+        compileOnly("io.papermc.paper:paper-api:$paperVersion")
+    }
 
     testImplementation("org.yaml:snakeyaml:2.2")
     testImplementation("com.google.code.gson:gson:2.11.0")

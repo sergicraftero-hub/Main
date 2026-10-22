@@ -41,7 +41,7 @@ hats:
     name: "<yellow>Corona"
     icon: GOLD_BLOCK
     price-gems: 150
-    item: {material: GOLDEN_HELMET, model: "escape:hat_crown", name: "<yellow>Corona"}
+    item: {material: GOLD_NUGGET, model: "escape:hat_crown", name: "<yellow>Corona"}
 
 victory:
   confetti: {name: "<yellow>Confeti", icon: FIREWORK_ROCKET, colors: ["#FF4444", "#44FF44", "#4488FF", "#FFFF44"], shape: BURST, count: 4, price-keys: 1000}

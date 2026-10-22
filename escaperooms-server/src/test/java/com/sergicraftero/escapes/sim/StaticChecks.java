@@ -176,6 +176,7 @@ final class StaticChecks {
             }
             actions(out, t, items, puzzles, propIds, pid, maps(pr, "actions"));
         }
+        redstoneChecks(out, t);
         for (Map<String, Object> z : maps(room, "zones")) {
             ref(out, t, "zone " + z.get("id"), String.valueOf(z.get("region")));
             if (z.get("locked-until") != null && !puzzles.containsKey(String.valueOf(z.get("locked-until")))) {
@@ -196,6 +197,45 @@ final class StaticChecks {
         }
         actions(out, t, items, puzzles, propIds, "on-start", maps(room, "on-start"));
         return out;
+    }
+
+    /**
+     * Copper bulbs toggle on any redstone pulse: a vanilla button, lever or pressure plate next to one
+     * (or powering the block next to one) would scramble a puzzle. Buttons pressed by players are vanilla.
+     */
+    private static void redstoneChecks(List<String> out, Template t) {
+        List<int[]> powered = new ArrayList<>();
+        for (int y = 0; y < t.sizeY(); y++) {
+            for (int z = 0; z < t.sizeZ(); z++) {
+                for (int x = 0; x < t.sizeX(); x++) {
+                    String d = t.get(x, y, z);
+                    String bid = id(d);
+                    boolean source = bid.endsWith("_button") || bid.equals("minecraft:lever") || bid.endsWith("_pressure_plate");
+                    if (!source) {
+                        continue;
+                    }
+                    powered.add(new int[]{x, y, z});
+                    if (bid.endsWith("_pressure_plate") || d.contains("face=floor")) {
+                        powered.add(new int[]{x, y - 1, z});
+                    } else if (d.contains("face=ceiling")) {
+                        powered.add(new int[]{x, y + 1, z});
+                    } else {
+                        String facing = d.replaceAll(".*facing=([a-z]+).*", "$1");
+                        powered.add(new int[]{x - dx(facing), y, z - dz(facing)});
+                    }
+                }
+            }
+        }
+        int[][] around = {{1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}};
+        for (int[] p : powered) {
+            for (int[] d : around) {
+                String n = t.get(p[0] + d[0], p[1] + d[1], p[2] + d[2]);
+                if (id(n).endsWith("copper_bulb")) {
+                    out.add("copper bulb at " + (p[0] + d[0]) + "," + (p[1] + d[1]) + "," + (p[2] + d[2])
+                            + " can be toggled by redstone from " + p[0] + "," + p[1] + "," + p[2]);
+                }
+            }
+        }
     }
 
     private static void actions(List<String> out, Template t, Map<String, Object> items, Map<String, Map<String, Object>> puzzles,

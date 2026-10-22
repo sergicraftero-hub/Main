@@ -104,7 +104,7 @@ public final class PasteJob {
                 applyTile(b, e.getValue(), itemResolver);
             } catch (RuntimeException ex) {
                 // A broken tile must never stop the room from loading.
-                world.getServer().getLogger().warning("[EscapeRooms] Tile at " + b.getX() + "," + b.getY() + ","
+                org.bukkit.Bukkit.getLogger().warning("[EscapeRooms] Tile at " + b.getX() + "," + b.getY() + ","
                         + b.getZ() + " failed: " + ex.getMessage());
             }
         }

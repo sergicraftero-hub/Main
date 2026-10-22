@@ -1,0 +1,345 @@
+{
+  "providers": [
+    {
+      "type": "space",
+      "advances": {
+        "": -1,
+        "": -2,
+        "": -4,
+        "": -8,
+        "": -16,
+        "": -32,
+        "": -64,
+        "": -128,
+        "": 1,
+        "": 2,
+        "": 4,
+        "": 8
+      }
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/main_3.png",
+      "ascent": 13,
+      "height": 75,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/main_4.png",
+      "ascent": 13,
+      "height": 93,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/main_5.png",
+      "ascent": 13,
+      "height": 111,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/main_6.png",
+      "ascent": 13,
+      "height": 129,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/rooms_3.png",
+      "ascent": 13,
+      "height": 75,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/rooms_4.png",
+      "ascent": 13,
+      "height": 93,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/rooms_5.png",
+      "ascent": 13,
+      "height": 111,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/rooms_6.png",
+      "ascent": 13,
+      "height": 129,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/room_3.png",
+      "ascent": 13,
+      "height": 75,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/room_4.png",
+      "ascent": 13,
+      "height": 93,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/room_5.png",
+      "ascent": 13,
+      "height": 111,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/room_6.png",
+      "ascent": 13,
+      "height": 129,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/shop_3.png",
+      "ascent": 13,
+      "height": 75,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/shop_4.png",
+      "ascent": 13,
+      "height": 93,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/shop_5.png",
+      "ascent": 13,
+      "height": 111,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/shop_6.png",
+      "ascent": 13,
+      "height": 129,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/profile_3.png",
+      "ascent": 13,
+      "height": 75,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/profile_4.png",
+      "ascent": 13,
+      "height": 93,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/profile_5.png",
+      "ascent": 13,
+      "height": 111,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/profile_6.png",
+      "ascent": 13,
+      "height": 129,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/keypad_3.png",
+      "ascent": 13,
+      "height": 75,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/keypad_4.png",
+      "ascent": 13,
+      "height": 93,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/keypad_5.png",
+      "ascent": 13,
+      "height": 111,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/keypad_6.png",
+      "ascent": 13,
+      "height": 129,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/dial_3.png",
+      "ascent": 13,
+      "height": 75,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/dial_4.png",
+      "ascent": 13,
+      "height": 93,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/dial_5.png",
+      "ascent": 13,
+      "height": 111,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/dial_6.png",
+      "ascent": 13,
+      "height": 129,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/notebook_3.png",
+      "ascent": 13,
+      "height": 75,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/notebook_4.png",
+      "ascent": 13,
+      "height": 93,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/notebook_5.png",
+      "ascent": 13,
+      "height": 111,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/notebook_6.png",
+      "ascent": 13,
+      "height": 129,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/generic_3.png",
+      "ascent": 13,
+      "height": 75,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/generic_4.png",
+      "ascent": 13,
+      "height": 93,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/generic_5.png",
+      "ascent": 13,
+      "height": 111,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "escape:font/gui/generic_6.png",
+      "ascent": 13,
+      "height": 129,
+      "chars": [
+        ""
+      ]
+    }
+  ]
+}

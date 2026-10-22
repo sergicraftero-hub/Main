@@ -1,0 +1,41 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "minecraft:custom_model_data",
+    "index": 0,
+    "entries": [
+      {
+        "threshold": 2324631,
+        "model": {
+          "type": "minecraft:model",
+          "model": "escape:item/fragment"
+        }
+      },
+      {
+        "threshold": 4837399,
+        "model": {
+          "type": "minecraft:model",
+          "model": "escape:item/envelope"
+        }
+      },
+      {
+        "threshold": 7572261,
+        "model": {
+          "type": "minecraft:model",
+          "model": "escape:item/ticket"
+        }
+      },
+      {
+        "threshold": 9665844,
+        "model": {
+          "type": "minecraft:model",
+          "model": "escape:item/document"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "minecraft:item/paper"
+    }
+  }
+}

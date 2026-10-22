@@ -5,7 +5,6 @@ import com.destroystokyo.paper.profile.ProfileProperty;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -96,6 +95,11 @@ public record ItemSpec(String id, Material material, String model, String name, 
         return create(amount, placeholders);
     }
 
+    public ItemStack create(int count) {
+        return create(count, new Object[0]);
+    }
+
+    @SuppressWarnings("deprecation") // setCustomModelData(Integer) still maps to the 1.21.4 component
     public ItemStack create(int count, Object... placeholders) {
         ItemStack item = new ItemStack(material, Math.max(1, count));
         ItemMeta meta = item.getItemMeta();
@@ -109,14 +113,8 @@ public record ItemSpec(String id, Material material, String model, String name, 
             meta.lore(Msg.itemLines(lore, placeholders));
         }
         if (model != null && !model.isBlank()) {
-            NamespacedKey key = NamespacedKey.fromString(model.toLowerCase(Locale.ROOT));
-            if (key != null) {
-                try {
-                    meta.setItemModel(key);
-                } catch (NoSuchMethodError ignored) {
-                    // very old server builds: vanilla look only
-                }
-            }
+            // Custom model data (not item_model): without the pack the vanilla look stays, never a missing texture.
+            meta.setCustomModelData(modelData(model));
         }
         if (glow) {
             meta.setEnchantmentGlintOverride(true);
@@ -155,6 +153,10 @@ public record ItemSpec(String id, Material material, String model, String name, 
         }
         item.setItemMeta(meta);
         return item;
+    }
+
+    public static int modelData(String model) {
+        return com.sergicraftero.escapes.pack.ModelData.of(model);
     }
 
     public boolean matches(ItemStack stack) {

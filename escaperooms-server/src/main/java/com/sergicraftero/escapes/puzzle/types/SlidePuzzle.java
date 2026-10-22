@@ -126,7 +126,7 @@ public final class SlidePuzzle extends Puzzle {
         private final Player player;
 
         BoardMenu(Player p) {
-            super(5, MenuStyle.title(p, "generic", Msg.parse(str("title", "<dark_gray>Desliza las piezas"))));
+            super(5, MenuStyle.title(p, "generic", 5, Msg.parse(str("title", "<dark_gray>Desliza las piezas"))));
             this.player = p;
             draw();
         }

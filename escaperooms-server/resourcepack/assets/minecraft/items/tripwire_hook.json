@@ -1,0 +1,41 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "minecraft:custom_model_data",
+    "index": 0,
+    "entries": [
+      {
+        "threshold": 1106712,
+        "model": {
+          "type": "minecraft:model",
+          "model": "escape:item/key_brass"
+        }
+      },
+      {
+        "threshold": 6349244,
+        "model": {
+          "type": "minecraft:model",
+          "model": "escape:item/hook"
+        }
+      },
+      {
+        "threshold": 8688729,
+        "model": {
+          "type": "minecraft:model",
+          "model": "escape:item/key_gold"
+        }
+      },
+      {
+        "threshold": 8751297,
+        "model": {
+          "type": "minecraft:model",
+          "model": "escape:item/key_iron"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "minecraft:item/tripwire_hook"
+    }
+  }
+}

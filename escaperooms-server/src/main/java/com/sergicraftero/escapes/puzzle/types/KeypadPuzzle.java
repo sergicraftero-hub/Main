@@ -131,7 +131,7 @@ public final class KeypadPuzzle extends Puzzle {
         private final Player player;
 
         PadMenu(Player p) {
-            super(6, MenuStyle.title(p, "keypad", Msg.parse(str("title", "<dark_gray>Introduce el código"))));
+            super(6, MenuStyle.title(p, "keypad", 6, Msg.parse(str("title", "<dark_gray>Introduce el código"))));
             this.player = p;
             draw();
         }
@@ -217,7 +217,7 @@ public final class KeypadPuzzle extends Puzzle {
         private final Player player;
 
         DialMenu(Player p) {
-            super(5, MenuStyle.title(p, "dial", Msg.parse(str("title", "<dark_gray>Cerradura de combinación"))));
+            super(5, MenuStyle.title(p, "dial", 5, Msg.parse(str("title", "<dark_gray>Cerradura de combinación"))));
             this.player = p;
             this.values = new int[Math.min(code.size(), 9)];
             draw();

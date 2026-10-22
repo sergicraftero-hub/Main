@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Menu look. With the resource pack loaded (Java players), a painted background is drawn behind the chest
@@ -19,17 +18,16 @@ import java.util.Map;
  */
 public final class MenuStyle {
 
-    /** Background glyph per menu kind (see resourcepack/assets/escape/font/gui.json). */
-    private static final Map<String, String> BACKGROUNDS = Map.ofEntries(
-            Map.entry("main", "\uE100"),
-            Map.entry("rooms", "\uE101"),
-            Map.entry("room", "\uE102"),
-            Map.entry("shop", "\uE103"),
-            Map.entry("profile", "\uE104"),
-            Map.entry("keypad", "\uE105"),
-            Map.entry("dial", "\uE106"),
-            Map.entry("notebook", "\uE107"),
-            Map.entry("generic", "\uE108"));
+    /** Painted themes; each has a background for 3, 4, 5 and 6 rows (see tools/generate_pack.py). */
+    public static final java.util.List<String> THEMES = java.util.List.of(
+            "main", "rooms", "room", "shop", "profile", "keypad", "dial", "notebook", "generic");
+
+    /** Glyph of a theme/rows background: U+E100 + theme * 4 + (rows - 3). */
+    public static char glyph(String kind, int rows) {
+        int theme = Math.max(0, THEMES.indexOf(kind));
+        int r = Math.max(3, Math.min(6, rows));
+        return (char) (0xE100 + theme * 4 + (r - 3));
+    }
 
     /**
      * The title starts 8 px inside the chest: move −8 to the left edge, draw the 176 px background (advance 177),
@@ -41,12 +39,12 @@ public final class MenuStyle {
     private MenuStyle() {
     }
 
-    public static Component title(Player p, String kind, Component title) {
+    public static Component title(Player p, String kind, int rows, Component title) {
         EscapePlugin plugin = EscapePlugin.get();
         if (plugin == null || !plugin.pack().hasPack(p)) {
             return title;
         }
-        String bg = BACKGROUNDS.getOrDefault(kind, BACKGROUNDS.get("generic"));
+        String bg = String.valueOf(glyph(kind, rows));
         Component glyph = Component.text(SHIFT_IN + bg + SHIFT_BACK).font(Key.key("escape", "gui")).color(NamedTextColor.WHITE);
         return glyph.append(title.colorIfAbsent(NamedTextColor.DARK_GRAY));
     }
@@ -60,8 +58,13 @@ public final class MenuStyle {
         ItemStack it = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         var meta = it.getItemMeta();
         meta.setHideTooltip(true);
+        com.sergicraftero.escapes.util.Keys.set(meta, com.sergicraftero.escapes.util.Keys.HOTBAR, "filler");
         it.setItemMeta(meta);
         return it;
+    }
+
+    public static boolean isFiller(ItemStack it) {
+        return "filler".equals(com.sergicraftero.escapes.util.Keys.get(it, com.sergicraftero.escapes.util.Keys.HOTBAR));
     }
 
     public static ItemStack pane(Material m, String name) {

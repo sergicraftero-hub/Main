@@ -92,7 +92,8 @@ public final class PlatesPuzzle extends Puzzle {
     private boolean occupied(Block plate) {
         for (Player p : game.players()) {
             Block feet = p.getLocation().getBlock();
-            if (feet.equals(plate) && p.isOnGround()) {
+            org.bukkit.entity.Entity body = p; // Entity#isOnGround: the Player override is deprecated
+            if (feet.equals(plate) && body.isOnGround()) {
                 return true;
             }
         }

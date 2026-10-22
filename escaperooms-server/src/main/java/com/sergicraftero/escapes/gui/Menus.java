@@ -102,7 +102,7 @@ public final class Menus {
 
     public void main(Player p) {
         ConfigurationSection m = cfg("main");
-        Menu menu = new Menu(m == null ? 5 : m.getInt("rows", 5), MenuStyle.title(p, "main",
+        Menu menu = new Menu(m == null ? 5 : m.getInt("rows", 5), MenuStyle.title(p, "main", m == null ? 5 : m.getInt("rows", 5),
                 Msg.parse(m == null ? "Menú" : m.getString("title", "Menú"))));
         PlayerProfile prof = plugin.profiles().get(p);
         int level = plugin.progress().level(prof.xp);
@@ -132,7 +132,7 @@ public final class Menus {
     // ───────────────────────── rooms ─────────────────────────
 
     public void wings(Player p) {
-        Menu menu = new Menu(4, MenuStyle.title(p, "rooms", Msg.get("menu.wings-title")));
+        Menu menu = new Menu(4, MenuStyle.title(p, "rooms", 4, Msg.get("menu.wings-title")));
         ConfigurationSection wings = plugin.getConfig().getConfigurationSection("wings");
         if (wings != null) {
             for (String id : wings.getKeys(false)) {
@@ -161,7 +161,7 @@ public final class Menus {
     public void wing(Player p, String wing, int page) {
         List<RoomDef> rooms = plugin.rooms().wing(wing);
         String wingName = plugin.getConfig().getString("wings." + wing + ".name", wing);
-        Menu menu = new Menu(6, MenuStyle.title(p, "rooms", Msg.parse(wingName)));
+        Menu menu = new Menu(6, MenuStyle.title(p, "rooms", 6, Msg.parse(wingName)));
         int[] slots = {10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34};
         int per = slots.length;
         int from = page * per;
@@ -219,7 +219,7 @@ public final class Menus {
     }
 
     public void room(Player p, RoomDef r) {
-        Menu menu = new Menu(5, MenuStyle.title(p, "room", Msg.parse(r.name)));
+        Menu menu = new Menu(5, MenuStyle.title(p, "room", 5, Msg.parse(r.name)));
         menu.set(4, roomIcon(p, r));
         String deny = plugin.access().denyReason(p, r);
         PartyManager.Party party = plugin.parties().of(p);
@@ -268,7 +268,7 @@ public final class Menus {
     }
 
     public void roomTop(Player p, RoomDef r) {
-        Menu menu = new Menu(4, MenuStyle.title(p, "generic", Msg.get("menu.top-title", "room", Msg.parse(r.name))));
+        Menu menu = new Menu(4, MenuStyle.title(p, "generic", 4, Msg.get("menu.top-title", "room", Msg.parse(r.name))));
         List<Storage.Run> all = plugin.storage().best(r.id);
         List<Storage.Run> week = plugin.storage().weekly(r.id);
         menu.set(11, runsItem(Material.GOLD_BLOCK, Msg.raw("menu.top-all"), all));
@@ -296,7 +296,7 @@ public final class Menus {
     public void profile(Player p) {
         PlayerProfile prof = plugin.profiles().get(p);
         int level = plugin.progress().level(prof.xp);
-        Menu menu = new Menu(5, MenuStyle.title(p, "profile", Msg.get("menu.profile-title", "player", p.getName())));
+        Menu menu = new Menu(5, MenuStyle.title(p, "profile", 5, Msg.get("menu.profile-title", "player", p.getName())));
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta sm = (SkullMeta) head.getItemMeta();
         sm.setOwningPlayer(p);
@@ -332,7 +332,7 @@ public final class Menus {
     public void achievements(Player p, int page) {
         ConfigurationSection all = plugin.progress().yml().getConfigurationSection("achievements");
         List<String> ids = all == null ? List.of() : new ArrayList<>(all.getKeys(false));
-        Menu menu = new Menu(6, MenuStyle.title(p, "generic", Msg.get("menu.achievements-title")));
+        Menu menu = new Menu(6, MenuStyle.title(p, "generic", 6, Msg.get("menu.achievements-title")));
         PlayerProfile prof = plugin.profiles().get(p);
         int per = 45;
         for (int i = 0; i < per && page * per + i < ids.size(); i++) {
@@ -363,7 +363,7 @@ public final class Menus {
 
     public void settings(Player p) {
         PlayerProfile prof = plugin.profiles().get(p);
-        Menu menu = new Menu(3, MenuStyle.title(p, "generic", Msg.get("menu.settings-title")));
+        Menu menu = new Menu(3, MenuStyle.title(p, "generic", 3, Msg.get("menu.settings-title")));
         boolean hide = prof.setting("hide-players", false);
         menu.set(11, MenuStyle.button(hide ? Material.ENDER_EYE : Material.ENDER_PEARL,
                 Msg.raw(hide ? "menu.setting-players-hidden" : "menu.setting-players-shown")), c -> {
@@ -387,7 +387,7 @@ public final class Menus {
     // ───────────────────────── daily & quests ─────────────────────────
 
     public void daily(Player p) {
-        Menu menu = new Menu(3, MenuStyle.title(p, "generic", Msg.get("menu.daily-title")));
+        Menu menu = new Menu(3, MenuStyle.title(p, "generic", 3, Msg.get("menu.daily-title")));
         List<Map<?, ?>> rewards = plugin.progress().dailyRewards();
         int next = plugin.progress().nextStreakDay(p);
         boolean can = plugin.progress().canClaimDaily(p);
@@ -430,7 +430,7 @@ public final class Menus {
     public void quests(Player p) {
         plugin.progress().ensureQuests(p);
         PlayerProfile prof = plugin.profiles().get(p);
-        Menu menu = new Menu(4, MenuStyle.title(p, "generic", Msg.get("menu.quests-title")));
+        Menu menu = new Menu(4, MenuStyle.title(p, "generic", 4, Msg.get("menu.quests-title")));
         menu.set(1, MenuStyle.button(Material.SUNFLOWER, Msg.raw("menu.quests-daily")));
         menu.set(19, MenuStyle.button(Material.CLOCK, Msg.raw("menu.quests-weekly")));
         questRow(p, menu, true, prof.dailyQuests, 3);
@@ -471,7 +471,7 @@ public final class Menus {
 
     public void shop(Player p) {
         PlayerProfile prof = plugin.profiles().get(p);
-        Menu menu = new Menu(5, MenuStyle.title(p, "shop", Msg.get("menu.shop-title")));
+        Menu menu = new Menu(5, MenuStyle.title(p, "shop", 5, Msg.get("menu.shop-title")));
         menu.set(4, MenuStyle.button(Material.SUNFLOWER, Msg.raw("menu.balance"), List.of(
                 "<gold>🗝 " + Text.number(prof.keys), "<light_purple>💎 " + Text.number(prof.gems))));
         menu.set(20, MenuStyle.button(Material.FILLED_MAP, Msg.raw("menu.shop-rooms"), Msg.rawList("menu.shop-rooms-lore")),
@@ -489,7 +489,7 @@ public final class Menus {
     }
 
     public void premiumRooms(Player p) {
-        Menu menu = new Menu(6, MenuStyle.title(p, "shop", Msg.get("menu.shop-rooms")));
+        Menu menu = new Menu(6, MenuStyle.title(p, "shop", 6, Msg.get("menu.shop-rooms")));
         int slot = 10;
         for (RoomDef r : plugin.rooms().all()) {
             if (!r.isPaid()) {
@@ -510,7 +510,7 @@ public final class Menus {
     }
 
     public void cosmetics(Player p) {
-        Menu menu = new Menu(3, MenuStyle.title(p, "shop", Msg.get("menu.cosmetics-title")));
+        Menu menu = new Menu(3, MenuStyle.title(p, "shop", 3, Msg.get("menu.cosmetics-title")));
         Material[] icons = {Material.NAME_TAG, Material.BLAZE_POWDER, Material.LEATHER_HELMET, Material.FIREWORK_ROCKET};
         for (int i = 0; i < 4; i++) {
             String type = com.sergicraftero.escapes.cosmetic.CosmeticService.TYPES.get(i);
@@ -522,7 +522,7 @@ public final class Menus {
     }
 
     public void cosmeticType(Player p, String type) {
-        Menu menu = new Menu(6, MenuStyle.title(p, "shop", Msg.parse(Msg.raw("cosmetics." + type))));
+        Menu menu = new Menu(6, MenuStyle.title(p, "shop", 6, Msg.parse(Msg.raw("cosmetics." + type))));
         String equipped = plugin.cosmetics().equipped(p, type);
         int slot = 0;
         for (String id : plugin.cosmetics().ids(type)) {
@@ -584,7 +584,7 @@ public final class Menus {
 
     /** Yes/no purchase confirmation. */
     public void confirm(Player p, Component what, String price, Runnable yes, Runnable back) {
-        Menu menu = new Menu(3, MenuStyle.title(p, "generic", Msg.get("menu.confirm-title")));
+        Menu menu = new Menu(3, MenuStyle.title(p, "generic", 3, Msg.get("menu.confirm-title")));
         menu.set(11, MenuStyle.button(Material.LIME_CONCRETE, Msg.raw("menu.confirm-yes"),
                 List.of(Msg.raw("menu.confirm-what").replace("<price>", price))), c -> {
             yes.run();
@@ -606,7 +606,7 @@ public final class Menus {
 
     public void party(Player p) {
         PartyManager.Party party = plugin.parties().of(p);
-        Menu menu = new Menu(4, MenuStyle.title(p, "generic", Msg.get("menu.party-title")));
+        Menu menu = new Menu(4, MenuStyle.title(p, "generic", 4, Msg.get("menu.party-title")));
         if (party == null) {
             menu.set(13, MenuStyle.button(Material.WRITABLE_BOOK, Msg.raw("menu.party-none"), Msg.rawList("menu.party-none-lore")));
         } else {
@@ -639,7 +639,7 @@ public final class Menus {
     // ───────────────────────── leaderboards ─────────────────────────
 
     public void leaderboards(Player p) {
-        Menu menu = new Menu(6, MenuStyle.title(p, "generic", Msg.get("menu.leaderboards-title")));
+        Menu menu = new Menu(6, MenuStyle.title(p, "generic", 6, Msg.get("menu.leaderboards-title")));
         List<String> lore = new ArrayList<>();
         int i = 1;
         for (Storage.LevelEntry e : plugin.storage().topLevels()) {
@@ -667,7 +667,7 @@ public final class Menus {
             main(p);
             return;
         }
-        Menu menu = new Menu(6, MenuStyle.title(p, "notebook", Msg.get("notebook.title", "room", Msg.parse(g.room().name))));
+        Menu menu = new Menu(6, MenuStyle.title(p, "notebook", 6, Msg.get("notebook.title", "room", Msg.parse(g.room().name))));
         menu.set(4, MenuStyle.button(Material.CLOCK, Msg.raw("notebook.info"), Msg.rawList("notebook.info-lore").stream()
                 .map(l -> l.replace("<time>", Text.time(Math.max(0, g.room().timeLimitMs - g.elapsed())))
                         .replace("<solved>", String.valueOf(g.solvedCount()))
@@ -715,7 +715,7 @@ public final class Menus {
     }
 
     private void confirmLeave(Player p, Game g) {
-        Menu menu = new Menu(3, MenuStyle.title(p, "generic", Msg.get("notebook.leave-confirm")));
+        Menu menu = new Menu(3, MenuStyle.title(p, "generic", 3, Msg.get("notebook.leave-confirm")));
         menu.set(11, MenuStyle.button(Material.RED_CONCRETE, Msg.raw("notebook.leave-yes")), c -> {
             p.closeInventory();
             g.leave(p, true);
